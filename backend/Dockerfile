@@ -12,6 +12,8 @@ RUN python -m pip install --no-cache-dir -r requirements.lock \
 COPY app ./app
 COPY alembic ./alembic
 COPY alembic.ini ./
+# ECL-124: start script for Render (render.yaml); the default CMD is unchanged.
+COPY deploy ./deploy
 
 RUN groupadd --system app \
     && useradd --system --gid app --home-dir /app --no-create-home app
