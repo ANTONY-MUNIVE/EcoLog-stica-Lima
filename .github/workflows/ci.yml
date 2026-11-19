@@ -2,14 +2,16 @@ name: CI
 
 on:
   workflow_dispatch:
+  # Inspección 5: lint, static analysis, build and dependency validation on
+  # pushes and pull requests to develop and main (ECL-65: Sonar also on main).
   push:
     branches:
-      # ECL-65: the SonarCloud analysis must also run on main.
       - main
-      - feat/ECL-50-st024-pruebas-conductores
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 permissions:
   contents: read
