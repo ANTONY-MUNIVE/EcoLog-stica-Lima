@@ -1,0 +1,834 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/22.18.0/x64/bin/node",
+      "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/node_modules/.bin/playwright",
+      "test",
+      "--project=firefox"
+    ],
+    "configFile": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/playwright.config.ts",
+    "rootDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e/global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/commit/0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+        "commitHash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+        "buildHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407"
+      },
+      "gitCommit": {
+        "shortHash": "0ef36ec",
+        "hash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+        "subject": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion",
+        "body": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion\n\nci(ECL-125): despliegue continuo a producción en Render",
+        "author": {
+          "name": "TONY-7XF",
+          "email": "antony.muniver@gmail.com",
+          "time": 1795107187000
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "time": 1795107187000
+        },
+        "branch": "main"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/commit/0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "commitHash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "buildHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407"
+          },
+          "gitCommit": {
+            "shortHash": "0ef36ec",
+            "hash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "subject": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion",
+            "body": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion\n\nci(ECL-125): despliegue continuo a producción en Render",
+            "author": {
+              "name": "TONY-7XF",
+              "email": "antony.muniver@gmail.com",
+              "time": 1795107187000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1795107187000
+            },
+            "branch": "main"
+          },
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/commit/0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "commitHash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "buildHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407"
+          },
+          "gitCommit": {
+            "shortHash": "0ef36ec",
+            "hash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "subject": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion",
+            "body": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion\n\nci(ECL-125): despliegue continuo a producción en Render",
+            "author": {
+              "name": "TONY-7XF",
+              "email": "antony.muniver@gmail.com",
+              "time": 1795107187000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1795107187000
+            },
+            "branch": "main"
+          },
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/commit/0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "commitHash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "buildHref": "https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407"
+          },
+          "gitCommit": {
+            "shortHash": "0ef36ec",
+            "hash": "0ef36eca26e31d097c5333527ba0d6aa05b6e5d8",
+            "subject": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion",
+            "body": "Merge pull request #154 from ANTONY-MUNIVE/feat/ECL-125-deploy-produccion\n\nci(ECL-125): despliegue continuo a producción en Render",
+            "author": {
+              "name": "TONY-7XF",
+              "email": "antony.muniver@gmail.com",
+              "time": 1795107187000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1795107187000
+            },
+            "branch": "main"
+          },
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/resultados.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "playwright-report/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "autenticacion.spec.ts",
+      "file": "autenticacion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Autenticación y permisos por rol (RF-001)",
+          "file": "autenticacion.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el Operador inicia sesión y ve su menú",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1505,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:42.930Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-e2d691300a4680b0a6ca",
+              "file": "autenticacion.spec.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "una contraseña incorrecta muestra el error sin revelar cuál dato falló",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 628,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:44.932Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-36589a862e0f6da7167b",
+              "file": "autenticacion.spec.ts",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "validación del formulario: campos vacíos",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 477,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:45.569Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-592ee475c9d46c9a733d",
+              "file": "autenticacion.spec.ts",
+              "line": 20,
+              "column": 3
+            },
+            {
+              "title": "el Conductor no accede a pantallas de Operación",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 609,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:46.058Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-82d5514d808e1ff63cf9",
+              "file": "autenticacion.spec.ts",
+              "line": 27,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "flujo-rutas.spec.ts",
+      "file": "flujo-rutas.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Flujo principal: optimizar, ver el mapa, registrar y cerrar (US-006, US-008, US-009)",
+          "file": "flujo-rutas.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el Operador cierra una ruta y la ve en el dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2756,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:46.680Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "23358cd7e0e62b58cb0a-a4be1da160f85f9e4939",
+              "file": "flujo-rutas.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "validación: no se acepta una hora real futura",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1299,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:49.444Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "23358cd7e0e62b58cb0a-f1203d7aa647495200e5",
+              "file": "flujo-rutas.spec.ts",
+              "line": 43,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "incidencias.spec.ts",
+      "file": "incidencias.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Incidencias del conductor y validación del Operador (US-012, RF-007)",
+          "file": "incidencias.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el Conductor reporta desde el móvil y el Operador la valida",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2621,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:50.755Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b3bf0a2432c36c0f748e-658d1d8af769fd06a478",
+              "file": "incidencias.spec.ts",
+              "line": 5,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "rendimiento.spec.ts",
+      "file": "rendimiento.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Monitoreo de rendimiento (Web Vitals y API)",
+          "file": "rendimiento.spec.ts",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Web Vitals de la carga de /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1906,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:53.390Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "web-vitals-login-firefox.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJ0dGZiX21zIjogNCwKICAiZmNwX21zIjogODAsCiAgImxjcF9tcyI6IDgwLAogICJkb21fY29udGVudF9sb2FkZWRfbXMiOiA3MywKICAiY2FyZ2FfdG90YWxfbXMiOiAxMDIsCiAgInRyYW5zZmVyaWRvX2J5dGVzIjogMTY2ODE1Cn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee5b1f930bbb958fc682-899f68dc62eb1fca5800",
+              "file": "rendimiento.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "tiempo hasta el contenido de las pantallas del MVP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1569,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:55.303Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "tiempo-hasta-contenido-firefox.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJsb2dpbl9oYXN0YV9pbmljaW8iOiAzMzUsCiAgInJ1dGFzX3lfYWxlcnRhcyI6IDExMSwKICAiZGFzaGJvYXJkX3Nvc3RlbmliaWxpZGFkIjogOTkKfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee5b1f930bbb958fc682-7619ddfa4d59916f8d88",
+              "file": "rendimiento.spec.ts",
+              "line": 47,
+              "column": 3
+            },
+            {
+              "title": "tiempos de respuesta de la API (20 llamadas por endpoint, p95 < 500 ms)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "La API se mide una sola vez; no depende del navegador.",
+                      "location": {
+                        "file": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e/rendimiento.spec.ts",
+                        "line": 68,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 4,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:56.880Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "La API se mide una sola vez; no depende del navegador.",
+                          "location": {
+                            "file": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e/rendimiento.spec.ts",
+                            "line": 68,
+                            "column": 10
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ee5b1f930bbb958fc682-461a35f6b2c52b20ba3b",
+              "file": "rendimiento.spec.ts",
+              "line": 67,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "resiliencia.spec.ts",
+      "file": "resiliencia.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Disponibilidad y resiliencia",
+          "file": "resiliencia.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "códigos HTTP de la API: 200, 401, 404 y 422",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "La API se verifica una sola vez.",
+                      "location": {
+                        "file": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e/resiliencia.spec.ts",
+                        "line": 6,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 3,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:56.894Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "La API se verifica una sola vez.",
+                          "location": {
+                            "file": "/home/runner/work/EcoLog-stica-Lima/EcoLog-stica-Lima/frontend/e2e/resiliencia.spec.ts",
+                            "line": 6,
+                            "column": 10
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6e031fdc79e4d1b1773a-e7c4f678e7744e824f6a",
+              "file": "resiliencia.spec.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "sin conexión, la incidencia del conductor queda guardada para enviarse después",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 973,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T17:00:58.769Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e031fdc79e4d1b1773a-dc0a4d8704179460fb0d",
+              "file": "resiliencia.spec.ts",
+              "line": 54,
+              "column": 3
+            }
+          ],
+          "suites": [
+            {
+              "title": "Inyección de fallas en la red",
+              "file": "resiliencia.spec.ts",
+              "line": 25,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "si la API no responde, la pantalla de rutas lo informa y permite reintentar",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 1070,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-11-19T17:00:56.901Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "6e031fdc79e4d1b1773a-7a3e89b5a5b2c257dc58",
+                  "file": "resiliencia.spec.ts",
+                  "line": 31,
+                  "column": 5
+                },
+                {
+                  "title": "un error 500 del servidor no rompe la pantalla",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 785,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-11-19T17:00:57.977Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "6e031fdc79e4d1b1773a-40fdbe158f3b82d63caf",
+                  "file": "resiliencia.spec.ts",
+                  "line": 43,
+                  "column": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-19T17:00:22.097Z",
+    "duration": 37912.742000000006,
+    "expected": 12,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

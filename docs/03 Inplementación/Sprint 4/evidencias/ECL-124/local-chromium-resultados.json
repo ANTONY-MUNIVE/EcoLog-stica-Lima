@@ -1,0 +1,718 @@
+{
+  "config": {
+    "argv": [
+      "/opt/node22/bin/node",
+      "/home/claude/ecolog-stica-lima/frontend/node_modules/.bin/playwright",
+      "test",
+      "--project=chromium"
+    ],
+    "configFile": "/home/claude/ecolog-stica-lima/frontend/playwright.config.ts",
+    "rootDir": "/home/claude/ecolog-stica-lima/frontend/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/home/claude/ecolog-stica-lima/frontend/e2e/global-setup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/claude/ecolog-stica-lima/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/claude/ecolog-stica-lima/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/claude/ecolog-stica-lima/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/home/claude/ecolog-stica-lima/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/claude/ecolog-stica-lima/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/home/claude/ecolog-stica-lima/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/resultados.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "playwright-report/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "autenticacion.spec.ts",
+      "file": "autenticacion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Autenticación y permisos por rol (RF-001)",
+          "file": "autenticacion.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el Operador inicia sesión y ve su menú",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 827,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:50.675Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-b9113d5c63b29a49b087",
+              "file": "autenticacion.spec.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "una contraseña incorrecta muestra el error sin revelar cuál dato falló",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 863,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:51.599Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-cc84922a6f0f8c4fe629",
+              "file": "autenticacion.spec.ts",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "validación del formulario: campos vacíos",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 478,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:52.472Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-4b0ee1aec84d0463c859",
+              "file": "autenticacion.spec.ts",
+              "line": 20,
+              "column": 3
+            },
+            {
+              "title": "el Conductor no accede a pantallas de Operación",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 581,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:52.961Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5777233506a2947611d5-ef65e0be0e9d6e741493",
+              "file": "autenticacion.spec.ts",
+              "line": 27,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "flujo-rutas.spec.ts",
+      "file": "flujo-rutas.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Flujo principal: optimizar, ver el mapa, registrar y cerrar (US-006, US-008, US-009)",
+          "file": "flujo-rutas.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el Operador cierra una ruta y la ve en el dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3364,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:53.561Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "23358cd7e0e62b58cb0a-b9d55c40cee2f77ed462",
+              "file": "flujo-rutas.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "validación: no se acepta una hora real futura",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1687,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:56.937Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "23358cd7e0e62b58cb0a-9e029450e6303a91fbf3",
+              "file": "flujo-rutas.spec.ts",
+              "line": 43,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "incidencias.spec.ts",
+      "file": "incidencias.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Incidencias del conductor y validación del Operador (US-012, RF-007)",
+          "file": "incidencias.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el Conductor reporta desde el móvil y el Operador la valida",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2730,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:23:58.642Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b3bf0a2432c36c0f748e-1b8a86d19d90448e476c",
+              "file": "incidencias.spec.ts",
+              "line": 5,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "rendimiento.spec.ts",
+      "file": "rendimiento.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Monitoreo de rendimiento (Web Vitals y API)",
+          "file": "rendimiento.spec.ts",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Web Vitals de la carga de /login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2051,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:24:01.402Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "web-vitals-login-chromium.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJ0dGZiX21zIjogNCwKICAiZmNwX21zIjogMTQ4LAogICJsY3BfbXMiOiAxNDgsCiAgImRvbV9jb250ZW50X2xvYWRlZF9tcyI6IDY5LAogICJjYXJnYV90b3RhbF9tcyI6IDY5LAogICJ0cmFuc2Zlcmlkb19ieXRlcyI6IDE2NjUxNQp9"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee5b1f930bbb958fc682-00d5bb60f750cc196377",
+              "file": "rendimiento.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "tiempo hasta el contenido de las pantallas del MVP",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1454,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:24:03.459Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "tiempo-hasta-contenido-chromium.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJsb2dpbl9oYXN0YV9pbmljaW8iOiA1MzAsCiAgInJ1dGFzX3lfYWxlcnRhcyI6IDE4NSwKICAiZGFzaGJvYXJkX3Nvc3RlbmliaWxpZGFkIjogMTUwCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee5b1f930bbb958fc682-22df1d91c1ad53f7c90c",
+              "file": "rendimiento.spec.ts",
+              "line": 47,
+              "column": 3
+            },
+            {
+              "title": "tiempos de respuesta de la API (20 llamadas por endpoint, p95 < 500 ms)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1449,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:24:04.921Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "tiempos-api.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJHRVQgL2hlYWx0aCI6IHsKICAgICJwNTBfbXMiOiAzLAogICAgInA5NV9tcyI6IDQsCiAgICAibWF4X21zIjogOCwKICAgICJlc3RhZG8iOiAyMDAKICB9LAogICJHRVQgL29wdGltaXphY2lvbmVzP2ZlY2hhX29wZXJhY2lvbiI6IHsKICAgICJwNTBfbXMiOiAxMiwKICAgICJwOTVfbXMiOiAxNiwKICAgICJtYXhfbXMiOiAxNywKICAgICJlc3RhZG8iOiAyMDAKICB9LAogICJHRVQgL29wdGltaXphY2lvbmVzL3tpZH0iOiB7CiAgICAicDUwX21zIjogMTgsCiAgICAicDk1X21zIjogMjQsCiAgICAibWF4X21zIjogMjQsCiAgICAiZXN0YWRvIjogMjAwCiAgfSwKICAiR0VUIC9pbmRpY2Fkb3Jlcy9zb3N0ZW5pYmlsaWRhZCI6IHsKICAgICJwNTBfbXMiOiAxMCwKICAgICJwOTVfbXMiOiAxMywKICAgICJtYXhfbXMiOiAxMywKICAgICJlc3RhZG8iOiAyMDAKICB9LAogICJHRVQgL2luY2lkZW5jaWFzIjogewogICAgInA1MF9tcyI6IDEwLAogICAgInA5NV9tcyI6IDEyLAogICAgIm1heF9tcyI6IDEzLAogICAgImVzdGFkbyI6IDIwMAogIH0sCiAgIkdFVCAvdmVoaWN1bG9zIjogewogICAgInA1MF9tcyI6IDEwLAogICAgInA5NV9tcyI6IDExLAogICAgIm1heF9tcyI6IDExLAogICAgImVzdGFkbyI6IDIwMAogIH0KfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ee5b1f930bbb958fc682-349689fbe80ddccfc92b",
+              "file": "rendimiento.spec.ts",
+              "line": 67,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "resiliencia.spec.ts",
+      "file": "resiliencia.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Disponibilidad y resiliencia",
+          "file": "resiliencia.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "códigos HTTP de la API: 200, 401, 404 y 422",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:24:06.382Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "codigos-http.json",
+                          "contentType": "application/json",
+                          "body": "ewogICJHRVQgL2hlYWx0aCI6IDIwMCwKICAiR0VUIC9vcHRpbWl6YWNpb25lcyBzaW4gc2VzacOzbiI6IDQwMSwKICAiR0VUIC9uby1leGlzdGUiOiA0MDQsCiAgIlBPU1QgL2xvZ2luIGNvbiBjdWVycG8gaW52w6FsaWRvIjogNDIyCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e031fdc79e4d1b1773a-f27ad03e0d849a2c6e8b",
+              "file": "resiliencia.spec.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "sin conexión, la incidencia del conductor queda guardada para enviarse después",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1042,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-19T19:24:08.771Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6e031fdc79e4d1b1773a-dc1dfb6dec42a9cfe37c",
+              "file": "resiliencia.spec.ts",
+              "line": 54,
+              "column": 3
+            }
+          ],
+          "suites": [
+            {
+              "title": "Inyección de fallas en la red",
+              "file": "resiliencia.spec.ts",
+              "line": 25,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "si la API no responde, la pantalla de rutas lo informa y permite reintentar",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 1374,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-11-19T19:24:06.414Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "6e031fdc79e4d1b1773a-ca0077c27c01285e92a5",
+                  "file": "resiliencia.spec.ts",
+                  "line": 31,
+                  "column": 5
+                },
+                {
+                  "title": "un error 500 del servidor no rompe la pantalla",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 965,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-11-19T19:24:07.797Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "6e031fdc79e4d1b1773a-209e16c97b384fb35c34",
+                  "file": "resiliencia.spec.ts",
+                  "line": 43,
+                  "column": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-19T19:23:29.932Z",
+    "duration": 39957.882000000005,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
