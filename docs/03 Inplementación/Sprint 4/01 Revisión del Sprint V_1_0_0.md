@@ -46,10 +46,63 @@ ratificó Julio ([#100](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/pull/
 
 ## Demostración del trabajo completado
 
-«DATO-DEMO»
+### Demostración a los stakeholders del 13/11/2026 (Inspección 4)
+
+| Campo | Registro |
+|---|---|
+| Quién la presentó | Julio Naupari, líder del proyecto |
+| Equipo y navegador | PC del laboratorio de la universidad y laptop de Julio, con Google Chrome |
+| Evaluador | Docente del curso Taller de Proyectos 2 |
+| Resultado | 14/20 en la rúbrica de la Inspección 4 |
+| Retroalimentación del docente | «Añade métricas de CO₂ antes y después de la implementación de los módulos de la aplicación. La comparación consolidada debe indicar las unidades utilizadas en cada indicador. No realizó la demostración de la automatización. Desarrolle solo los puntos solicitados en la rúbrica.» El docente no hizo preguntas durante la exposición. |
+
+Guion y tiempos medidos de esa demostración:
+[guía de la demo del Sprint 4](<../../03 Implementación/Sprint 04/guias/GUIA_DEMO_SPRINT4.md>).
+Capturas del ensayo: [mapa](<../../03 Implementación/Sprint 04/evidencias/ECL-105/03-mapa-rutas.png>),
+[ruta cerrada](<../../03 Implementación/Sprint 04/evidencias/ECL-105/05-ruta-cerrada.png>),
+[dashboard](<../../03 Implementación/Sprint 04/evidencias/ECL-105/06-dashboard.png>) y
+[validación de incidencia](<../../03 Implementación/Sprint 04/evidencias/ECL-105/10-validacion.png>).
+
+### Respuesta a la retroalimentación
+
+| Observación | Qué se hizo |
+|---|---|
+| No se demostró la automatización | La automatización ahora es demostrable de punta a punta: `ci.yml` (calidad), `tests.yml` (unitarias, integración y E2E en 3 navegadores con artifacts) y `deploy-production.yml` (despliegue en Render con smoke test). La demo de la Inspección 5 la ejecuta en vivo (ver abajo). |
+| Desarrollar solo lo pedido | Los entregables de esta inspección son los 4 documentos de la rúbrica en esta carpeta, sin anexos adicionales. |
+| Métricas de CO₂ por módulo con unidades | Pendiente (ver «Pendientes»). |
+
+### Trabajo completado después del 13/11, verificado en producción
+
+| Qué se demostró | Evidencia verificable |
+|---|---|
+| Suite E2E en Chromium, Firefox y WebKit en verde en el CI de `main` (14/14, 12/12 y 12/12) | [Run #9 de Tests](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407) · [03 Análisis Playwright](<03 Analisis PlayWrigth V_1_0_0.md>) · [captura del run](<evidencias/ECL-124/ci-run-44571097407-tests-main.jpg>) |
+| Despliegue continuo: `Deploy production` despliega el commit validado, espera `live` y verifica la URL | [Summary en verde](<evidencias/ECL-125/deploy-production-summary-verde.png>): `/api/health` `{"status":"ok"}`, portada 200, 30/30 respuestas 200 |
+| La app en producción: <https://ecologistica-web-9tkq.onrender.com> | [Servicio web «Live» en Render](<evidencias/ECL-125/render-web-live-0ef36ec.png>) |
+| Optimización de 150 pedidos y 15 vehículos en producción (19/11/2026) | `POST /optimizaciones` → 201 `COMPLETADA` en 20,23 s, 12 rutas y 2 pedidos inviables con motivo |
+| Evaluación de usabilidad con SUS | [04 Usabilidad](<04 Usabilidad V_1_0_0.md>) |
+
+### Demostración de la Inspección 5 (20/11/2026, 14:40)
+
+Recorrido en vivo sobre producción, con la automatización como parte de la demo:
+
+1. **Automatización.** Un cambio pequeño en una rama abre un PR: el CI y `tests.yml` corren los checks y la suite E2E en 3 navegadores. Se muestran el reporte HTML y los artifacts de un run terminado.
+2. **Despliegue.** `Deploy production` (manual o tras el CI de `main`): deploy en Render, espera `live`, smoke test y disponibilidad en el Summary.
+3. **Producto.** En la URL de producción: login del Operador, rutas del 20/11 en el mapa, registro y cierre de la ruta `DEMO-004` (4 paradas), dashboard de sostenibilidad, reporte de incidencia desde el móvil del Conductor y validación del Operador.
+4. **Calidad y usabilidad.** Resultados de Playwright (Web Vitals, API < 500 ms, resiliencia) y puntaje SUS.
 
 ## Pendientes
 
-«DATO-PENDIENTES»
+| Pendiente | Responsable | Jira | Siguiente paso |
+|---|---|---|---|
+| Métricas de CO₂ antes y después por módulo, con unidades en la comparación consolidada (retroalimentación del 13/11) | Antony y José | Por crear | Agregar la tabla por módulo al informe de Green IT antes de la evaluación final del 04/12 |
+| Demo ejecutable en una PC de laboratorio sin permisos de administrador | Julio | [ECL-68](https://continental-team-il84x39k.atlassian.net/browse/ECL-68) (In Review / QA) | Con producción en Render, la demo solo necesita un navegador; registrar la prueba en el laboratorio |
+| Documentos de cierre del Sprint 4 en curso | Julio, Frank y Giancarlo | [ECL-100](https://continental-team-il84x39k.atlassian.net/browse/ECL-100), [ECL-101](https://continental-team-il84x39k.atlassian.net/browse/ECL-101), [ECL-103](https://continental-team-il84x39k.atlassian.net/browse/ECL-103) | Cerrarlos o reemplazarlos por los documentos de esta carpeta |
+| La optimización solo se lanza por la API (Swagger); la pantalla de rutas no tiene botón | José y Antony | Por crear | Botón «Optimizar fecha» para el Operador |
+| El inicio y el menú todavía muestran «Próximamente: Rutas optimizadas» | Giancarlo | Por crear | Retirar el texto obsoleto |
+| Rotar la credencial de la base de producción | Antony | [ECL-125](https://continental-team-il84x39k.atlassian.net/browse/ECL-125) | Después del 20/11: credencial nueva en Render, sincronizar el Blueprint, redesplegar la API y borrar la anterior |
+| Plan gratuito de Render: arranque en frío de unos 50 s y base gratuita con vencimiento | Antony | — | Abrir la URL 5 minutos antes de cada demo; la base dura hasta después de la evaluación final |
+| `actions/upload-artifact` usa Node.js 20, que GitHub marca como obsoleto | Antony | Por crear | Actualizar la acción, fijada por SHA, a una versión con Node.js 24 |
+| Reoptimización (US-007), cola con worker (RNF-002) y alerta 5xx | José y Antony | [ECL-13](https://continental-team-il84x39k.atlassian.net/browse/ECL-13), [ECL-121](https://continental-team-il84x39k.atlassian.net/browse/ECL-121), [ECL-122](https://continental-team-il84x39k.atlassian.net/browse/ECL-122) | Backlog |
+| Ambiente de staging separado de producción | Julio | [ECL-107](https://continental-team-il84x39k.atlassian.net/browse/ECL-107) | Backlog; hoy los PR se validan en CI con PostGIS efímero |
 
 [← Volver al README principal](../../../README.md)

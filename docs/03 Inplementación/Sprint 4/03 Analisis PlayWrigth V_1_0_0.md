@@ -16,7 +16,12 @@
 | Herramienta | `@playwright/test` 1.63.0 |
 | Entorno desplegado | <https://ecologistica-web-9tkq.onrender.com> (web) y <https://ecologistica-api-3mnp.onrender.com> (API), en Render |
 
-«DATO-CI-RESUMEN»
+**Resultado en una línea.** En el CI de `main` (run
+[#9 de Tests](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407),
+commit `0ef36ec`, 19/11/2026) la suite pasó en los tres navegadores: **14/14 en
+Chromium, 12/12 en Firefox y 12/12 en WebKit**, sin fallos ni reintentos. FCP de
+`/login` entre 80 y 160 ms, p95 de la API ≤ 22 ms y producción con **30/30
+respuestas 200** y TTFB p95 de 165 ms.
 
 ## 1. Configuración del entorno de pruebas
 
@@ -185,9 +190,31 @@ no clases CSS. Si un botón pierde su nombre accesible, la prueba falla.
 
 ### 2.3 Resultados de ejecución
 
-«DATO-CI-RESULTADOS»
+**Ejecución oficial en CI.** Run
+[#9 de Tests](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/runs/44571097407)
+sobre `main` (`0ef36ec`, merge del PR #154), 19/11/2026, `ubuntu-24.04`:
 
-**Ejecución local de referencia (19/11/2026, 14:23, Chromium).** Base
+| Navegador | Pruebas | Pasan | Fallan | Omitidas por diseño | Reintentos | Tasa de éxito | Duración |
+|---|---|---|---|---|---|---|---|
+| Chromium | 14 | 14 | 0 | 0 | 0 | **100 %** | 38,0 s |
+| Firefox | 14 | 12 | 0 | 2 (API) | 0 | **100 %** de las ejecutadas | 37,9 s |
+| WebKit | 14 | 12 | 0 | 2 (API) | 0 | **100 %** de las ejecutadas | 62,7 s |
+| **Total** | **42** | **38** | **0** | **4** | **0** | **100 %** | |
+
+Los 7 casos de flujos críticos (autenticación, ruta, incidencias) pasan en los
+tres navegadores. En el mismo run pasaron también las 1 330 pruebas unitarias y
+350 de integración del backend y las 1 018 del frontend (job «Tests / Backend
+unit and integration» y «Tests / Frontend unit»).
+
+WebKit es el más lento: 10,2 s en el primer login y 13,9 s en el flujo de cierre,
+contra 0,8 y 2,8 s en Chromium. La diferencia viene del arranque del motor en el
+runner de Linux, no de la app; las métricas de carga de la sección 3 son
+similares en los tres.
+
+![Run #9 de Tests en GitHub Actions: jobs en verde](<evidencias/ECL-124/ci-run-44571097407-tests-main.jpg>)
+
+**Ejecución local de referencia (19/11/2026, 14:23, Chromium).** Sirve para
+reproducir la suite fuera del CI. Base
 `e2e_demo` recién migrada y sembrada, build de producción del frontend:
 
 | Navegador | Pruebas | Pasan | Fallan | Omitidas | Tasa de éxito | Duración |
@@ -214,45 +241,49 @@ herramientas externas:
 | Tiempo hasta el contenido | Reloj de la prueba hasta ver el contenido de cada pantalla | < 5 000 ms |
 | Tiempo de respuesta de la API | 20 llamadas por endpoint con sesión iniciada; p50, p95 y máximo | p95 < 500 ms |
 
-WebKit no expone `largest-contentful-paint`. En ese motor el LCP se reporta como
-`null` («no soportado») y no como 0, para no falsear el promedio.
+Si un motor no expone `largest-contentful-paint`, la prueba reporta el LCP como
+`null` («no soportado») y no como 0, para no falsear la comparación. En el
+run #9 los tres motores lo reportaron.
 
 ### 3.2 Web Vitals de `/login`
 
-«DATO-CI-VITALS»
+Valores del CI (run #9, `vite preview` y API en el mismo runner) y de la
+ejecución local de referencia:
 
-| Métrica | Local, Chromium (19/11) |
-|---|---|
-| TTFB | 4 ms |
-| FCP | 148 ms |
-| LCP | 148 ms |
-| DOMContentLoaded | 69 ms |
-| Carga total | 69 ms |
-| Bytes transferidos | 166 515 B (162,6 KiB) |
+| Métrica | CI Chromium | CI Firefox | CI WebKit | Local Chromium | Umbral |
+|---|---|---|---|---|---|
+| TTFB | 4 ms | 4 ms | 2 ms | 4 ms | — |
+| FCP | 160 ms | 80 ms | 90 ms | 148 ms | < 1 800 ms |
+| LCP | 160 ms | 80 ms | 90 ms | 148 ms | < 2 500 ms |
+| DOMContentLoaded | 70 ms | 73 ms | 48 ms | 69 ms | — |
+| Carga total | 70 ms | 102 ms | 76 ms | 69 ms | — |
+| Bytes transferidos | 166 515 B | 166 815 B | 168 108 B | 166 515 B | — |
 
 ![Web Vitals adjuntas en el reporte HTML](<evidencias/ECL-124/local-chromium-03-web-vitals.png>)
 
 ### 3.3 Tiempo hasta el contenido
 
-| Pantalla | Local, Chromium (19/11) | Umbral |
-|---|---|---|
-| Login → inicio del Operador | 530 ms | < 5 000 ms |
-| Rutas y alertas | 185 ms | < 5 000 ms |
-| Dashboard de sostenibilidad | 150 ms | < 5 000 ms |
+| Pantalla | CI Chromium | CI Firefox | CI WebKit | Local Chromium | Umbral |
+|---|---|---|---|---|---|
+| Login → inicio del Operador | 342 ms | 335 ms | 467 ms | 530 ms | < 5 000 ms |
+| Rutas y alertas | 158 ms | 111 ms | 220 ms | 185 ms | < 5 000 ms |
+| Dashboard de sostenibilidad | 89 ms | 99 ms | 203 ms | 150 ms | < 5 000 ms |
 
 ### 3.4 Tiempos de respuesta de la API
 
 20 llamadas secuenciales por endpoint, con sesión de Operador, sobre la
 optimización de 150 pedidos:
 
-| Endpoint | p50 (ms) | p95 (ms) | Máximo (ms) | HTTP | p95 < 500 ms |
-|---|---|---|---|---|---|
-| `GET /health` | 3 | 4 | 8 | 200 | ✅ |
-| `GET /optimizaciones?fecha_operacion` | 12 | 16 | 17 | 200 | ✅ |
-| `GET /optimizaciones/{id}` (detalle con 10 rutas) | 18 | 24 | 24 | 200 | ✅ |
-| `GET /indicadores/sostenibilidad` | 10 | 13 | 13 | 200 | ✅ |
-| `GET /incidencias` | 10 | 12 | 13 | 200 | ✅ |
-| `GET /vehiculos` | 10 | 11 | 11 | 200 | ✅ |
+| Endpoint | CI p50 | CI p95 | CI máx. | Local p95 | HTTP | p95 < 500 ms |
+|---|---|---|---|---|---|---|
+| `GET /health` | 2 ms | 3 ms | 5 ms | 4 ms | 200 | ✅ |
+| `GET /optimizaciones?fecha_operacion` | 13 ms | 14 ms | 14 ms | 16 ms | 200 | ✅ |
+| `GET /optimizaciones/{id}` (detalle de 10 rutas) | 20 ms | 22 ms | 22 ms | 24 ms | 200 | ✅ |
+| `GET /indicadores/sostenibilidad` | 12 ms | 13 ms | 14 ms | 13 ms | 200 | ✅ |
+| `GET /incidencias` | 11 ms | 12 ms | 12 ms | 12 ms | 200 | ✅ |
+| `GET /vehiculos` | 10 ms | 12 ms | 17 ms | 11 ms | 200 | ✅ |
+
+La prueba se ejecuta una vez, en el job de Chromium.
 
 ![Tiempos de la API en el reporte HTML](<evidencias/ECL-124/local-chromium-02-tiempos-api.png>)
 
@@ -260,7 +291,23 @@ Estas cifras son de la API en la misma máquina, sin latencia de red. Miden el
 costo del servidor y de la base de datos. El tiempo que ve un usuario desde
 Lima incluye además la red hasta Render (sección 4.3).
 
-«DATO-PROD-RENDIMIENTO»
+**Producción.** El workflow `deploy-production.yml` mide la API desplegada
+desde un runner de GitHub Actions contra Render (región Oregon): 30 llamadas
+a `/api/health` a través del proxy de la web, cada 2 s
+([CSV](<evidencias/ECL-125/deploy-smoke-44603066872-disponibilidad.csv>)):
+
+| Métrica | Valor |
+|---|---|
+| TTFB mínimo | 103 ms |
+| TTFB p50 | 141 ms |
+| TTFB p95 | **165 ms** |
+| TTFB máximo | 167 ms |
+| Tiempo total máximo | 167 ms |
+
+La optimización de 150 pedidos y 15 vehículos también se probó en producción el
+19/11/2026: `POST /optimizaciones` respondió **201 `COMPLETADA` en 20,23 s** de
+motor (21,0 s de extremo a extremo), con 12 rutas y 2 pedidos inviables a
+propósito. Cumple RNF-001 (≤ 45 s) en el plan gratuito de Render.
 
 ## 4. Disponibilidad y resiliencia
 
@@ -285,11 +332,35 @@ Lima incluye además la red hasta Render (sección 4.3).
 
 ### 4.3 Uptime en el entorno desplegado
 
-«DATO-PROD-UPTIME»
+| Verificación | Resultado |
+|---|---|
+| Workflow | [Deploy production](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml), run manual del 19/11/2026 sobre `0ef36ec`, en verde (2 min 18 s) |
+| Despliegue | API y web con estado `live` en Render antes del muestreo |
+| Salud | `GET /api/health` → `{"status":"ok"}`; portada HTTP 200 |
+| Disponibilidad en el muestreo | **30/30 respuestas 200 (100,00 %)**, una cada 2 s durante 1 minuto |
+| Monitoreo continuo | Render revisa `healthCheckPath` (`/health` en la API y `/` en la web) para dar por bueno cada despliegue y vigilar el servicio en ejecución |
+
+El muestreo cubre un minuto, no un mes: prueba que el despliegue queda operativo,
+no un SLA. El plan gratuito de Render **suspende los servicios tras 15 minutos
+sin tráfico** y la primera petición tarda unos 50 s en despertarlos. Ese
+arranque en frío no aparece en el muestreo porque el workflow despliega justo
+antes; sí lo ve un usuario que entra después de un rato sin uso.
+
+![Summary del workflow Deploy production en verde](<evidencias/ECL-125/deploy-production-summary-verde.png>)
 
 ### 4.4 Evidencias de los reportes HTML
 
-«DATO-CI-EVIDENCIAS»
+Los reportes HTML completos están como artifacts de cada corrida
+(`playwright-report-<navegador>-<run_id>`, 30 días). Copias de este run:
+
+| Evidencia | Archivo |
+|---|---|
+| CI · Chromium 14/14 | [ci-chromium-01-resumen.png](<evidencias/ECL-124/ci-chromium-01-resumen.png>) · [JSON](<evidencias/ECL-124/ci-chromium-resultados.json>) |
+| CI · Firefox 12/12 + 2 omitidas | [ci-firefox-01-resumen.png](<evidencias/ECL-124/ci-firefox-01-resumen.png>) · [JSON](<evidencias/ECL-124/ci-firefox-resultados.json>) |
+| CI · WebKit 12/12 + 2 omitidas | [ci-webkit-01-resumen.png](<evidencias/ECL-124/ci-webkit-01-resumen.png>) · [JSON](<evidencias/ECL-124/ci-webkit-resultados.json>) |
+| CI · Tiempos de la API | [ci-chromium-02-tiempos-api.png](<evidencias/ECL-124/ci-chromium-02-tiempos-api.png>) |
+
+Ejecución local de referencia:
 
 | Evidencia | Archivo |
 |---|---|
