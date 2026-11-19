@@ -2,6 +2,10 @@ import { expect, test } from '@playwright/test'
 import { API_URL, USERS, adjuntarJson, hoyLima, login, nuevoContextoConductor, password } from './support'
 
 test.describe('Disponibilidad y resiliencia', () => {
+  // The app's service worker would answer before page.route() in WebKit; the
+  // fault-injection tests talk to the network directly.
+  test.use({ serviceWorkers: 'block' })
+
   test('códigos HTTP de la API: 200, 401, 404 y 422', async ({ request }, testInfo) => {
     test.skip(testInfo.project.name !== 'chromium', 'La API se verifica una sola vez.')
     const salud = await request.get(`${API_URL}/health`)

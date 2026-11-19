@@ -27,12 +27,12 @@ export default async function globalSetup(): Promise<void> {
     }
     const detalle = await (await api.get(`${API_URL}/optimizaciones/${id}`)).json() as DetalleOptimizacion
     const rutas = detalle.rutas
-      .filter((r) => r.paradas.length >= 3 && r.paradas.length <= 12)
+      .filter((r) => r.paradas.length >= 2)
       .sort((a, b) => a.paradas.length - b.paradas.length)
     await mkdir('playwright-report', { recursive: true })
     await writeFile('playwright-report/plan-e2e.json', JSON.stringify({
       fecha, optimizacion_id: id, segundos_optimizacion: segundos,
-      rutas: rutas.slice(0, 6).map((r) => ({ ruta_id: r.ruta_id, placa: r.vehiculo.placa })),
+      rutas: rutas.slice(0, 4).map((r) => ({ ruta_id: r.ruta_id, placa: r.vehiculo.placa })),
       no_asignados: (detalle.no_asignados ?? []).length,
     }, null, 2))
   } finally {

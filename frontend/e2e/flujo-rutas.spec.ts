@@ -42,7 +42,9 @@ test.describe('Flujo principal: optimizar, ver el mapa, registrar y cerrar (US-0
 
   test('validación: no se acepta una hora real futura', async ({ page }) => {
     const plan = leerPlan()
-    const ruta = plan.rutas[5] ?? plan.rutas.at(-1)!
+    // Index 3 is never closed by a browser project (they use 0, 1 and 2).
+    const ruta = plan.rutas[3]
+    test.skip(!ruta, 'No hay una cuarta ruta libre para esta validación.')
     await login(page, USERS.operador, password('OPERADOR'))
     await page.getByRole('link', { name: /rutas y alertas/i }).first().click()
     await page.locator('#route-date').fill(plan.fecha)
