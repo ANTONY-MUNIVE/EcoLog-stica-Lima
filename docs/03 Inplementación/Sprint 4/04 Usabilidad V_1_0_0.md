@@ -166,7 +166,7 @@ integración de las funciones, pero sienten que necesitan guía para empezar.
 
 | Cuello de botella | Mejora | Estado | Verificación |
 |---|---|---|---|
-| CB1 | Se retira el aviso «Próximamente — Rutas optimizadas» del menú y del inicio. El inicio del Operador y del Administrador enlaza directo a **«Rutas y alertas — Rutas optimizadas del día en el mapa»**. | **Aplicada** en la rama [`fix/ECL-126-acceso-rutas-y-mapa`](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/compare/main...fix/ECL-126-acceso-rutas-y-mapa) (commit `86b4d17`), pendiente de revisión e integración | Pruebas actualizadas: las 1 018 de Vitest pasan; `AppShell` y `HomePage` comprueban el enlace a `/operacion/rutas` y que no aparezca «Próximamente». Capturas abajo. |
+| CB1 | Se retira el aviso «Próximamente — Rutas optimizadas» del menú y del inicio. El inicio del Operador y del Administrador enlaza directo a **«Rutas y alertas — Rutas optimizadas del día en el mapa»**. | **Aplicada** en el PR [#158](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/pull/158) (commit `86b4d17`) | Pruebas actualizadas: las 1 018 de Vitest pasan; `AppShell` y `HomePage` comprueban el enlace a `/operacion/rutas` y que no aparezca «Próximamente». Capturas abajo. |
 | CB2 | Abrir la lista de clientes al enfocar el campo, con los primeros resultados, sin exigir escribir | Propuesta | Volver a medir el ítem P8 |
 | CB3 | Mostrar en el inicio y en el menú del Operador el número de incidencias pendientes de validar | Propuesta | Tiempo hasta validar una incidencia nueva |
 | CB4 | Prueba moderada del rol Conductor en celular con 3 usuarios externos, observando dónde se traban | Propuesta | SUS del rol Conductor por separado |
