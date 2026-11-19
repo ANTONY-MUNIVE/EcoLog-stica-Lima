@@ -7,6 +7,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setup.ts',
+    // Playwright E2E specs (ECL-124) run with `npm run test:e2e`, not with Vitest.
+    exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**'],
     coverage: {
       provider: 'v8',
       // lcov feeds SonarCloud (ECL-65); text and html stay for local review.
