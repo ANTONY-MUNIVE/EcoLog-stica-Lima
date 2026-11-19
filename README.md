@@ -2,12 +2,31 @@
 
 **Optimizador de Rutas Sostenibles para DistriRápido S.A.C.**
 
-[![CI](https://github.com/JulioNaupariC/EcoLog-stica-Lima/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/JulioNaupariC/EcoLog-stica-Lima/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/JulioNaupariC/EcoLog-stica-Lima/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/JulioNaupariC/EcoLog-stica-Lima/actions/workflows/codeql.yml)
+[![CI](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/ci.yml)
+[![Tests](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/tests.yml)
+[![Deploy production](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml)
+[![CodeQL](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/codeql.yml)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=JulioNaupariC_EcoLog-stica-Lima&metric=alert_status)](https://sonarcloud.io/project/overview?id=JulioNaupariC_EcoLog-stica-Lima)
 [![Cobertura](https://sonarcloud.io/api/project_badges/measure?project=JulioNaupariC_EcoLog-stica-Lima&metric=coverage)](https://sonarcloud.io/component_measures?id=JulioNaupariC_EcoLog-stica-Lima&metric=coverage)
 
 Repositorio de documentación y desarrollo del proyecto académico EcoLogística Lima. La solución propone una plataforma web para gestión operativa, optimización VRPTW/Green VRP, seguimiento geográfico, analítica y reportes de sostenibilidad.
+
+## Inspección 5 · Sprint 4: calidad, CI/CD y usabilidad
+
+Aplicación en producción: <https://ecologistica-web-9tkq.onrender.com>
+
+| Documento | Contenido |
+|---|---|
+| [01 Revisión del Sprint V_1_0_0](<docs/03 Inplementación/Sprint 4/01 Revisión del Sprint V_1_0_0.md>) | Historias completadas con sus PR, demostración y pendientes |
+| [02 Retrospectiva del Sprint V_1_0_0](<docs/03 Inplementación/Sprint 4/02 Retrospectiva del Sprint V_1_0_0.md>) | Aprendizajes, fortalezas, mejoras y acciones |
+| [03 Analisis PlayWrigth V_1_0_0](<docs/03 Inplementación/Sprint 4/03 Analisis PlayWrigth V_1_0_0.md>) | E2E en Chromium, Firefox y WebKit, Web Vitals, tiempos de API, resiliencia y disponibilidad |
+| [04 Usabilidad V_1_0_0](<docs/03 Inplementación/Sprint 4/04 Usabilidad V_1_0_0.md>) | Evaluación SUS: ficha técnica, cálculo, grado y mejoras |
+
+| Workflow | Propósito | Estado |
+|---|---|---|
+| [`ci.yml`](.github/workflows/ci.yml) | Lint, análisis estático, build y auditoría de dependencias | [![CI](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/ci.yml) |
+| [`tests.yml`](.github/workflows/tests.yml) | Pruebas unitarias, de integración y E2E de Playwright con reportes como artifacts | [![Tests](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/tests.yml) |
+| [`deploy-production.yml`](.github/workflows/deploy-production.yml) | Despliegue en Render con GitHub Secrets, smoke test y disponibilidad | [![Deploy production](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml) |
 
 ## Estructura del repositorio
 
