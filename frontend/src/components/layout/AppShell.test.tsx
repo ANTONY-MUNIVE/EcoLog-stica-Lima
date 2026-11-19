@@ -48,14 +48,15 @@ describe('StaffShell', () => {
     expect(opener).toHaveFocus()
   })
 
-  it('ruta dorada: sidebar por rol, página actual y «Próximamente» sin enlaces', () => {
+  it('ruta dorada: sidebar por rol, página actual y rutas sin «Próximamente» (SUS, ECL-126)', () => {
     staff('OPERADOR')
     const nav = screen.getByRole('navigation', { name: 'Navegación principal' })
     expect(within(nav).getByRole('link', { name: 'Vehículos' })).toHaveAttribute('aria-current', 'page')
     expect(within(nav).getByRole('link', { name: 'Registrar pedido' })).toBeInTheDocument()
-    expect(screen.getByText('Rutas optimizadas')).not.toHaveAttribute('href')
-    // Section label plus one badge per planned feature; no sprint names in the UI.
-    expect(screen.getAllByText('Próximamente')).toHaveLength(2)
+    // The routes and map screen exists: the menu no longer announces it as planned.
+    expect(within(nav).getByRole('link', { name: 'Rutas y alertas' })).toHaveAttribute('href', '/operacion/rutas')
+    expect(screen.queryByText('Próximamente')).not.toBeInTheDocument()
+    expect(screen.queryByText('Rutas optimizadas')).not.toBeInTheDocument()
     expect(within(nav).getByRole('link', { name: 'Indicadores de sostenibilidad' })).toHaveAttribute('href', '/indicadores/sostenibilidad')
     expect(screen.queryByText(/Sprint/u)).not.toBeInTheDocument()
   })
