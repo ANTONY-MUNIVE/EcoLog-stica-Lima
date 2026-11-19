@@ -2,10 +2,6 @@ import { expect, test } from '@playwright/test'
 import { API_URL, USERS, adjuntarJson, hoyLima, login, nuevoContextoConductor, password } from './support'
 
 test.describe('Disponibilidad y resiliencia', () => {
-  // The app's service worker would answer before page.route() in WebKit; the
-  // fault-injection tests talk to the network directly.
-  test.use({ serviceWorkers: 'block' })
-
   test('códigos HTTP de la API: 200, 401, 404 y 422', async ({ request }, testInfo) => {
     test.skip(testInfo.project.name !== 'chromium', 'La API se verifica una sola vez.')
     const salud = await request.get(`${API_URL}/health`)
@@ -26,26 +22,33 @@ test.describe('Disponibilidad y resiliencia', () => {
     expect(invalido.status()).toBe(422)
   })
 
-  test('si la API no responde, la pantalla de rutas lo informa y permite reintentar', async ({ page }) => {
-    await login(page, USERS.operador, password('OPERADOR'))
-    await page.route(/\/optimizaciones\?/, (route) => route.abort('failed'))
-    await page.getByRole('link', { name: /rutas y alertas/i }).first().click()
-    await page.locator('#route-date').fill(hoyLima())
-    await page.getByRole('button', { name: /actualizar optimizaciones/i }).click()
-    await expect(page.getByText('No se pudo consultar la fecha')).toBeVisible()
-    await page.unroute(/\/optimizaciones\?/)
-    await page.getByRole('button', { name: /actualizar optimizaciones/i }).click()
-    await expect(page.getByRole('button', { name: /^Ruta / }).first()).toBeVisible()
-  })
+  test.describe('Inyección de fallas en la red', () => {
+    // The app's service worker would answer before page.route() in WebKit, so
+    // only these tests block it. The offline test below needs it to serve the
+    // precached screens.
+    test.use({ serviceWorkers: 'block' })
 
-  test('un error 500 del servidor no rompe la pantalla', async ({ page }) => {
-    await login(page, USERS.operador, password('OPERADOR'))
-    await page.route(/\/optimizaciones\?/, (route) => route.fulfill({ status: 500, contentType: 'application/json', body: '{"detail":"error"}' }))
-    await page.getByRole('link', { name: /rutas y alertas/i }).first().click()
-    await page.locator('#route-date').fill(hoyLima())
-    await page.getByRole('button', { name: /actualizar optimizaciones/i }).click()
-    await expect(page.getByText('No se pudo consultar la fecha')).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Inicio' }).first()).toBeVisible()
+    test('si la API no responde, la pantalla de rutas lo informa y permite reintentar', async ({ page }) => {
+      await login(page, USERS.operador, password('OPERADOR'))
+      await page.route(/\/optimizaciones\?/, (route) => route.abort('failed'))
+      await page.getByRole('link', { name: /rutas y alertas/i }).first().click()
+      await page.locator('#route-date').fill(hoyLima())
+      await page.getByRole('button', { name: /actualizar optimizaciones/i }).click()
+      await expect(page.getByText('No se pudo consultar la fecha')).toBeVisible()
+      await page.unroute(/\/optimizaciones\?/)
+      await page.getByRole('button', { name: /actualizar optimizaciones/i }).click()
+      await expect(page.getByRole('button', { name: /^Ruta / }).first()).toBeVisible()
+    })
+
+    test('un error 500 del servidor no rompe la pantalla', async ({ page }) => {
+      await login(page, USERS.operador, password('OPERADOR'))
+      await page.route(/\/optimizaciones\?/, (route) => route.fulfill({ status: 500, contentType: 'application/json', body: '{"detail":"error"}' }))
+      await page.getByRole('link', { name: /rutas y alertas/i }).first().click()
+      await page.locator('#route-date').fill(hoyLima())
+      await page.getByRole('button', { name: /actualizar optimizaciones/i }).click()
+      await expect(page.getByText('No se pudo consultar la fecha')).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Inicio' }).first()).toBeVisible()
+    })
   })
 
   test('sin conexión, la incidencia del conductor queda guardada para enviarse después', async ({ browser }) => {
