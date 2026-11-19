@@ -38,8 +38,8 @@ beforeEach(() => {
 
 describe('HomePage — inicio por rol con datos reales', () => {
   it.each([
-    ['ADMINISTRADOR', ['/pedidos/nuevo', '/clientes/preferencias', '/vehiculos', '/conductores', '/operacion/incidencias', '/usuarios', '/cambiar-contrasena']],
-    ['OPERADOR', ['/pedidos/nuevo', '/clientes/preferencias', '/vehiculos', '/conductores', '/operacion/incidencias', '/cambiar-contrasena']],
+    ['ADMINISTRADOR', ['/operacion/rutas', '/pedidos/nuevo', '/clientes/preferencias', '/vehiculos', '/conductores', '/operacion/incidencias', '/usuarios', '/cambiar-contrasena']],
+    ['OPERADOR', ['/operacion/rutas', '/pedidos/nuevo', '/clientes/preferencias', '/vehiculos', '/conductores', '/operacion/incidencias', '/cambiar-contrasena']],
     ['CONDUCTOR', ['/conductor/itinerario', '/conductor/incidencias/nueva', '/cambiar-contrasena']],
     ['ANALISTA', ['/cambiar-contrasena']],
     ['AUDITOR', ['/vehiculos', '/cambiar-contrasena']],
@@ -66,8 +66,9 @@ describe('HomePage — inicio por rol con datos reales', () => {
     expect(listDrivers).not.toHaveBeenCalled()
     expect(screen.queryByText(/primeros 100/u)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Registrar pedido/u })).toHaveAttribute('href', '/pedidos/nuevo')
-    // Card title plus one badge per planned feature; no sprint names in the UI.
-    expect(screen.getAllByText('Próximamente')).toHaveLength(2)
+    // SUS (ECL-126): the map is reachable from Inicio and nothing announces it as planned.
+    expect(screen.getByRole('link', { name: /Rutas y alertas/u })).toHaveAttribute('href', '/operacion/rutas')
+    expect(screen.queryByText('Próximamente')).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Indicadores de sostenibilidad/u })).toHaveAttribute('href', '/indicadores/sostenibilidad')
     expect(screen.queryByText(/Sprint/u)).not.toBeInTheDocument()
     // No invented sustainability figures.

@@ -3,12 +3,11 @@ import type { ReactNode } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import {
   AlertTriangle, BarChart3, Building2, ClipboardList, Home, Leaf, Map, Menu, PanelLeftClose, PanelLeftOpen,
-  Route as RouteIcon, Truck, UserRound, Users, X,
+  Truck, UserRound, Users, X,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { AuthRole } from '../../services/auth'
 import { canListVehicles, canManageOperations, canManageUsers, canViewOperationIndicators } from '../../domain/roles'
-import { Badge } from '../ui'
 import { AccountMenu } from './AccountMenu'
 
 interface NavEntry { to: string, label: string, icon: LucideIcon, end?: boolean }
@@ -36,10 +35,6 @@ function staffNavigation(role: AuthRole): { label: string, items: NavEntry[] }[]
     ...(administration.length ? [{ label: 'Administración', items: administration }] : []),
   ]
 }
-
-const COMING_SOON: { label: string, icon: LucideIcon }[] = [
-  { label: 'Rutas optimizadas', icon: RouteIcon },
-]
 
 function useDesktop(): boolean {
   const query = '(min-width: 64rem)'
@@ -149,18 +144,6 @@ export function StaffShell({ role, accountName, loggingOut, onLogout, banner, ch
           </ul>
         </div>)}
       </nav>
-      <div className="nav-section nav-section--soon">
-        <p className="nav-section-label">Próximamente</p>
-        <ul className="nav-list">
-          {COMING_SOON.map(item => <li key={item.label}>
-            <span className="nav-item nav-item--soon" title={collapsed ? `${item.label} (próximamente)` : undefined}>
-              <item.icon aria-hidden="true" size={20} />
-              <span className="nav-label">{item.label}</span>
-              <Badge tone="neutral" icon={null}>Próximamente</Badge>
-            </span>
-          </li>)}
-        </ul>
-      </div>
     </aside>
     {open && !desktop ? <button type="button" className="sidebar-backdrop" tabIndex={-1} aria-label="Cerrar menú"
       onClick={() => setOpen(false)} /> : null}
