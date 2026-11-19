@@ -1,0 +1,117 @@
+name: Deploy production
+
+# ECL-124 · Despliegue continuo en Render (render.yaml).
+# Se dispara cuando el CI termina en verde sobre main, al publicar un tag v*, o a
+# mano. Despliega el commit validado en la API y en la web, espera a que ambos
+# queden "live" y verifica la URL de producción (salud, portada y disponibilidad).
+#
+# GitHub Secrets: RENDER_API_KEY.
+# GitHub Variables: RENDER_SERVICE_ID_API, RENDER_SERVICE_ID_WEB, PRODUCTION_URL.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy / Render production
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      SERVICE_API: ${{ vars.RENDER_SERVICE_ID_API }}
+      SERVICE_WEB: ${{ vars.RENDER_SERVICE_ID_WEB }}
+      PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+      COMMIT: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - name: Check deployment configuration
+        run: |
+          missing=""
+          [ -n "$RENDER_API_KEY" ] || missing="$missing RENDER_API_KEY(secret)"
+          [ -n "$SERVICE_API" ] || missing="$missing RENDER_SERVICE_ID_API(variable)"
+          [ -n "$SERVICE_WEB" ] || missing="$missing RENDER_SERVICE_ID_WEB(variable)"
+          [ -n "$PRODUCTION_URL" ] || missing="$missing PRODUCTION_URL(variable)"
+          if [ -n "$missing" ]; then echo "::error::Falta configurar:$missing"; exit 1; fi
+          echo "Commit a desplegar: $COMMIT"
+
+      - name: Deploy API and web
+        run: |
+          deploy() {
+            curl -fsS -X POST "https://api.render.com/v1/services/$1/deploys" \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{\"clearCache\":\"do_not_clear\",\"commitId\":\"$COMMIT\"}" | jq -r '.id'
+          }
+          api_deploy="$(deploy "$SERVICE_API")"
+          web_deploy="$(deploy "$SERVICE_WEB")"
+          echo "API_DEPLOY=$api_deploy" >> "$GITHUB_ENV"
+          echo "WEB_DEPLOY=$web_deploy" >> "$GITHUB_ENV"
+          echo "Deploys: API $api_deploy · web $web_deploy"
+
+      - name: Wait until both deploys are live
+        run: |
+          status() {
+            curl -fsS "https://api.render.com/v1/services/$1/deploys/$2" \
+              -H "Authorization: Bearer $RENDER_API_KEY" | jq -r '.status'
+          }
+          for i in $(seq 1 100); do
+            api="$(status "$SERVICE_API" "$API_DEPLOY")"
+            web="$(status "$SERVICE_WEB" "$WEB_DEPLOY")"
+            echo "[$i] API=$api web=$web"
+            case "$api $web" in
+              *failed*|*canceled*|*deactivated*) echo "::error::Despliegue fallido (API=$api, web=$web)"; exit 1 ;;
+            esac
+            [ "$api" = "live" ] && [ "$web" = "live" ] && exit 0
+            sleep 15
+          done
+          echo "::error::Los despliegues no quedaron live en 25 minutos"; exit 1
+
+      - name: Smoke test and availability of production
+        run: |
+          mkdir -p smoke
+          health="$(curl -fsS --retry 10 --retry-delay 10 --retry-all-errors "$PRODUCTION_URL/api/health")"
+          echo "$health" | jq -e '.status == "ok"'
+          home="$(curl -fsS -o /dev/null -w '%{http_code}' "$PRODUCTION_URL/")"
+          [ "$home" = "200" ]
+          ok=0; total=30
+          : > smoke/disponibilidad.csv
+          echo "intento,http,ttfb_s,total_s" >> smoke/disponibilidad.csv
+          for i in $(seq 1 $total); do
+            line="$(curl -s -o /dev/null -w '%{http_code},%{time_starttransfer},%{time_total}' "$PRODUCTION_URL/api/health" || echo '000,0,0')"
+            echo "$i,$line" >> smoke/disponibilidad.csv
+            case "$line" in 200,*) ok=$((ok+1)) ;; esac
+            sleep 2
+          done
+          pct=$(awk -v ok=$ok -v t=$total 'BEGIN { printf "%.2f", 100*ok/t }')
+          {
+            echo "## Producción desplegada"
+            echo "- URL: $PRODUCTION_URL"
+            echo "- Commit: \`$COMMIT\`"
+            echo "- /api/health: \`$health\` · portada HTTP $home"
+            echo "- Disponibilidad en el muestreo: $ok/$total respuestas 200 ($pct %)"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$ok" -eq "$total" ]
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: deploy-smoke-${{ github.run_id }}
+          path: smoke/
+          if-no-files-found: warn
+          retention-days: 30
