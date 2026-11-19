@@ -1,0 +1,52 @@
+# ECL-124 · Infraestructura de producción en Render (Blueprint).
+# Render → New → Blueprint → este repositorio. Los despliegues los dispara
+# .github/workflows/deploy-production.yml (autoDeploy: false), solo después de
+# que el CI pasa en main. Las variables con sync: false se cargan a mano una vez,
+# porque dependen de las URL que Render asigna a cada servicio.
+databases:
+  - name: ecologistica-db
+    databaseName: ecologistica_demo
+    user: ecologistica
+    plan: free
+    region: oregon
+    postgresMajorVersion: "16"
+    ipAllowList: []
+
+services:
+  - type: web
+    name: ecologistica-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    autoDeploy: false
+    healthCheckPath: /health
+    # PostGIS, migraciones y arranque: backend/deploy/render_start.sh
+    dockerCommand: sh deploy/render_start.sh
+    envVars:
+      - key: RENDER_DATABASE_URL
+        fromDatabase:
+          name: ecologistica-db
+          property: connectionString
+      - key: APP_ENV
+        value: production
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false # ["https://<servicio-web>.onrender.com"]
+
+  - type: web
+    name: ecologistica-web
+    runtime: docker
+    rootDir: frontend
+    dockerfilePath: ./Dockerfile.render
+    dockerContext: .
+    plan: free
+    region: oregon
+    autoDeploy: false
+    healthCheckPath: /
+    envVars:
+      - key: API_UPSTREAM
+        sync: false # https://<servicio-api>.onrender.com
+      - key: VITE_API_BASE_URL
+        sync: false # https://<servicio-web>.onrender.com/api

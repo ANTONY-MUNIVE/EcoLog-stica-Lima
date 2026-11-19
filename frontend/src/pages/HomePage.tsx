@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import {
-  AlertTriangle, BarChart3, Building2, CheckCircle2, ClipboardList, KeyRound, Leaf, Map, Package, Route as RouteIcon, Truck, UploadCloud, UserRound, Users,
+  AlertTriangle, BarChart3, Building2, CheckCircle2, ClipboardList, KeyRound, Leaf, Map, Package, Truck, UploadCloud, UserRound, Users,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Badge, Card, LinkButton, PageHeader, StatCard } from '../components/ui'
+import { LinkButton, PageHeader, StatCard } from '../components/ui'
 import { canListVehicles, canManageOperations, canManageUsers, canViewOperationIndicators, ROLE_LABEL } from '../domain/roles'
 import type { AuthRole } from '../services/auth'
 import { getOperationIndicators } from '../services/indicators'
@@ -46,15 +46,6 @@ function QuickLink({ to, icon: Icon, title, description }: { to: string, icon: L
   </li>
 }
 
-function ComingSoon() {
-  return <Card title="Próximamente" titleId="home-next-title" className="coming-soon" tone="muted"
-    description="Funciones planificadas que todavía no muestran datos.">
-    <ul className="coming-soon-list">
-      <li><RouteIcon aria-hidden="true" size={18} /> Rutas optimizadas (VRPTW) <Badge tone="neutral" icon={null}>Próximamente</Badge></li>
-    </ul>
-  </Card>
-}
-
 function StaffHome({ role }: { role: AuthRole }) {
   const manage = canManageOperations(role)
   const vehiclesVisible = canListVehicles(role)
@@ -85,6 +76,7 @@ function StaffHome({ role }: { role: AuthRole }) {
     <section aria-labelledby="home-shortcuts-title" className="home-section">
       <h2 id="home-shortcuts-title" className="section-title">Accesos rápidos</h2>
       <ul className="quick-links">
+        {manage ? <QuickLink to="/operacion/rutas" icon={Map} title="Rutas y alertas" description="Rutas optimizadas del día en el mapa" /> : null}
         {summaryVisible ? <QuickLink to="/indicadores/sostenibilidad" icon={BarChart3} title="Indicadores de sostenibilidad" description="Periodo, métricas y comparación secuencial" /> : null}
         {manage ? <QuickLink to="/pedidos/nuevo" icon={ClipboardList} title="Registrar pedido" description="Con propuesta de preferencias del cliente" /> : null}
         {manage ? <QuickLink to="/clientes/preferencias" icon={Building2} title="Preferencias de entrega" description="Horarios, referencias y accesos" /> : null}
@@ -95,7 +87,6 @@ function StaffHome({ role }: { role: AuthRole }) {
         <QuickLink to="/cambiar-contrasena" icon={KeyRound} title="Cambiar contraseña" description="Actualizar la contraseña de tu cuenta" />
       </ul>
     </section>
-    <ComingSoon />
   </>
 }
 

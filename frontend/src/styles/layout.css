@@ -157,24 +157,6 @@
   flex-shrink: 0;
 }
 
-.nav-item--soon {
-  flex-wrap: wrap;
-  color: var(--color-text-muted);
-  cursor: default;
-}
-
-.nav-item--soon .badge {
-  margin-left: calc(20px + var(--space-3));
-}
-
-.nav-section--soon {
-  margin-top: var(--space-5);
-}
-
-.nav-item--soon:hover {
-  background: transparent;
-}
-
 .app-body {
   display: flex;
   flex-direction: column;

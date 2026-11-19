@@ -1,0 +1,28 @@
+# ECL-124 · Imagen del frontend para producción en Render (deploy-production.yml).
+# Sirve el build y reenvía /api/ a la API, así el navegador habla con un solo
+# origen y la cookie de sesión (SameSite=Strict) funciona entre servicios.
+
+# Etapa 1: compilar React/Vite
+FROM node:22.18.0-bookworm-slim@sha256:752ea8a2f758c34002a0461bd9f1cee4f9a3c36d48494586f60ffce1fc708e0e AS build
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY . .
+
+# Render passes the service's environment variables as build arguments.
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+RUN test -n "$VITE_API_BASE_URL" || (echo "Falta VITE_API_BASE_URL (https://<web>.onrender.com/api)" && exit 1)
+
+RUN npm run build
+
+# Etapa 2: nginx con plantilla (envsubst de PORT y API_UPSTREAM al arrancar)
+FROM nginx:alpine@sha256:df221db836e1754089190208cee7eeda94f233197056426eda74a43ab1abeac2
+
+ENV PORT=10000
+COPY nginx.render.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=build /app/dist/ /usr/share/nginx/html/
+
+EXPOSE 10000
