@@ -11,7 +11,7 @@ vi.mock('../domain/operationRoutes', async original => ({ ...await original<type
 vi.mock('../components/OperationRouteMap', () => ({ OperationRouteMap: ({ route }: { route: OperationRoute }) =>
   <div data-testid="route-map" data-route={route.ruta_id} data-sequences={route.paradas.map(p => p.secuencia).join(',')}>Mapa de prueba</div> }))
 let source: RouteSource
-beforeEach(() => { source = { list: vi.fn().mockResolvedValue(operationPage()), detail: vi.fn().mockResolvedValue(operationFixture()) } })
+beforeEach(() => { source = { optimize: vi.fn(), list: vi.fn().mockResolvedValue(operationPage()), detail: vi.fn().mockResolvedValue(operationFixture()) } })
 function show() { const expired = vi.fn(); return { ...render(<OperationRoutesPage source={source} onSessionExpired={expired} />), expired } }
 const listMock = () => vi.mocked(source.list)
 const detailMock = () => vi.mocked(source.detail)
@@ -146,4 +146,100 @@ it.each([
   detailMock().mockResolvedValueOnce(detail)
   show(); await routeHeading()
   expect(screen.getByText(new RegExp(mensaje))).toBeInTheDocument()
+})
+
+
+const emptyPage = () => ({ ...operationPage(), items: [], total: 0 })
+const created = () => ({ optimizacion_id: operationFixture().optimizacion_id, estado: 'COMPLETADA' as const,
+  solicitada_en: operationFixture().solicitada_en, simulado: false })
+function showOperator() {
+  const expired = vi.fn()
+  return { ...render(<OperationRoutesPage source={source} role="OPERADOR" onSessionExpired={expired} />), expired }
+}
+const optimizeButton = () => screen.getByRole('button', { name: 'Optimizar fecha' })
+it.each(['ADMINISTRADOR', 'ANALISTA', 'AUDITOR', 'CONDUCTOR'] as const)('no ofrece optimización a %s', async role => {
+  render(<OperationRoutesPage source={source} role={role} onSessionExpired={vi.fn()} />)
+  await routeHeading()
+  expect(screen.queryByRole('button', { name: 'Optimizar fecha' })).not.toBeInTheDocument()
+})
+it('genera con teclado, anuncia progreso, evita doble envío y selecciona la nueva optimización', async () => {
+  listMock().mockResolvedValueOnce(emptyPage())
+  let finish!: (value: ReturnType<typeof created>) => void
+  vi.mocked(source.optimize).mockReturnValueOnce(new Promise(resolve => { finish = resolve }))
+  showOperator()
+  await screen.findByText('Pulsa Optimizar fecha para generar las rutas.')
+  const user = userEvent.setup(), button = optimizeButton()
+  button.focus(); await user.keyboard('{Enter}')
+  expect(await screen.findByRole('button', { name: 'Optimizando…' })).toBeDisabled()
+  expect(screen.getByText('Calculando rutas para 2026-11-20. Puede tardar hasta 30 segundos.')).toHaveAttribute('role', 'status')
+  expect(screen.getByLabelText('Fecha de operación')).toBeDisabled()
+  fireEvent.click(button); fireEvent.click(button)
+  expect(source.optimize).toHaveBeenCalledExactlyOnceWith('2026-11-20', expect.any(AbortSignal))
+  const otherId = '123e4567-e89b-42d3-a456-426614174000'
+  listMock().mockResolvedValueOnce({ ...operationPage(), total: 2, items: [
+    { ...operationPage().items[0], optimizacion_id: otherId }, operationPage().items[0],
+  ] })
+  await act(async () => { finish(created()); await Promise.resolve() })
+  expect(await screen.findByText('Rutas generadas')).toHaveAttribute('role', 'status')
+  await routeHeading()
+  expect(screen.getByLabelText('Optimización')).toHaveValue(created().optimizacion_id)
+  expect(detailMock()).toHaveBeenLastCalledWith(created().optimizacion_id, expect.any(AbortSignal))
+  expect(listMock()).toHaveBeenCalledTimes(2)
+  expect(optimizeButton()).toBeDisabled()
+  expect(screen.getByText('Esta fecha ya tiene una optimización completada.')).toBeInTheDocument()
+})
+it.each([
+  ['invalid_selection', 'No hay pedidos pendientes para la fecha elegida.'],
+  ['invalid_selection', 'No hay vehículos activos utilizables para esta fecha.'],
+  ['optimization_unavailable', 'No se pudo optimizar. Inténtalo de nuevo en un momento.'],
+  ['optimization_forbidden', 'No tienes permiso para optimizar. Solo el Operador puede generar rutas.'],
+] as const)('muestra %s, conserva fecha y permite reintentar', async (kind, message) => {
+  listMock().mockResolvedValue(emptyPage())
+  vi.mocked(source.optimize).mockRejectedValueOnce(new OperationRoutesError(kind, message)).mockResolvedValueOnce(created())
+  showOperator(); await screen.findByText('Pulsa Optimizar fecha para generar las rutas.')
+  await userEvent.click(optimizeButton())
+  expect(await screen.findByRole('alert')).toHaveTextContent(message)
+  expect(screen.getByLabelText('Fecha de operación')).toHaveValue('2026-11-20')
+  expect(optimizeButton()).toBeEnabled()
+  await userEvent.click(optimizeButton())
+  expect(await screen.findByText('Rutas generadas')).toBeInTheDocument()
+})
+it('un 401 al optimizar usa onSessionExpired', async () => {
+  listMock().mockResolvedValue(emptyPage())
+  vi.mocked(source.optimize).mockRejectedValueOnce(new OperationRoutesError('unauthorized'))
+  const { expired } = showOperator(); await screen.findByText('Pulsa Optimizar fecha para generar las rutas.')
+  await userEvent.click(optimizeButton())
+  await waitFor(() => expect(expired).toHaveBeenCalledOnce())
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+})
+it('deshabilita con COMPLETADA incluso en otra página y durante la consulta inicial', async () => {
+  const failed = { ...operationPage().items[0], estado: 'FALLIDA' as const }
+  listMock().mockResolvedValueOnce({ ...operationPage(), items: [failed], total: 13 })
+    .mockResolvedValueOnce({ ...operationPage(), page: 2, total: 13 })
+  showOperator()
+  expect(optimizeButton()).toBeDisabled()
+  await screen.findByText('Esta fecha ya tiene una optimización completada.')
+  expect(optimizeButton()).toBeDisabled()
+  expect(source.optimize).not.toHaveBeenCalled()
+})
+it('deshabilita con corrida EN_PROCESO y fecha inválida', async () => {
+  listMock().mockResolvedValueOnce({ ...operationPage(), items: [{ ...operationPage().items[0], estado: 'EN_PROCESO' }] })
+  showOperator()
+  await screen.findByText('Esta fecha tiene una optimización en proceso. Actualiza el listado para consultar su resultado.')
+  expect(optimizeButton()).toBeDisabled()
+  fireEvent.change(screen.getByLabelText('Fecha de operación'), { target: { value: '' } })
+  expect(optimizeButton()).toBeDisabled()
+  expect(await screen.findByText('Elige una fecha válida para optimizar.')).toBeInTheDocument()
+})
+it('cancela al desmontar y no carga un resultado abandonado', async () => {
+  listMock().mockResolvedValue(emptyPage())
+  let finish!: (value: ReturnType<typeof created>) => void
+  vi.mocked(source.optimize).mockReturnValueOnce(new Promise(resolve => { finish = resolve }))
+  const { unmount } = showOperator(); await screen.findByText('Pulsa Optimizar fecha para generar las rutas.')
+  await userEvent.click(optimizeButton())
+  const signal = vi.mocked(source.optimize).mock.calls[0][1]
+  unmount()
+  expect(signal.aborted).toBe(true)
+  await act(async () => { finish(created()); await Promise.resolve() })
+  expect(listMock()).toHaveBeenCalledOnce()
 })

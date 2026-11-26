@@ -17,7 +17,7 @@ beforeEach(() => {
   vi.spyOn(Date, 'now').mockReturnValue(NOW)
   plan = operationFixture(); plan.simulado = false
   plan.rutas[0].estado = 'PLANIFICADA'; plan.rutas[0].paradas = plan.rutas[0].paradas.slice(0, 2).map(s => ({ ...s, estado: 'PENDIENTE' }))
-  source = { list: vi.fn().mockResolvedValue({ ...operationPage(), simulado: false }), detail: vi.fn().mockImplementation(() => Promise.resolve(structuredClone(plan))) }
+  source = { optimize: vi.fn(), list: vi.fn().mockResolvedValue({ ...operationPage(), simulado: false }), detail: vi.fn().mockImplementation(() => Promise.resolve(structuredClone(plan))) }
   outcomes = {
     record: vi.fn().mockImplementation((ruta_id: string, parada_id: string, payload: { estado: 'ATENDIDA' | 'NO_ATENDIDA'; atendida_en?: string }) => Promise.resolve({ ruta_id, parada_id, ...payload, atendida_en: payload.atendida_en ?? null, ruta_estado: 'EN_CURSO' })),
     close: vi.fn().mockImplementation((ruta_id: string) => Promise.resolve({ ruta_id, estado: 'CERRADA', cerrada_en: '2026-11-20T13:00:00-05:00', paradas_atendidas: 1, paradas_no_atendidas: 1 })),

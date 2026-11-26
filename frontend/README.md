@@ -1,5 +1,36 @@
 # Frontend de EcoLogística Lima
 
+## ECL-138: optimizar la fecha desde Rutas y alertas
+
+Solo el Operador ve «Optimizar fecha». La solicitud usa `POST /optimizaciones`
+con `fecha_operacion`, cookie de sesión y timeout propio de 60 s.
+Se anuncia el progreso y se evita el doble envío. Al terminar se recarga el
+listado y se selecciona el plan nuevo. Los errores conservan la fecha; un 401
+usa el manejo de sesión existente. Los motivos 422 conocidos se traducen sin
+mostrar valores enviados ni errores internos.
+
+El botón explica por qué está deshabilitado: fecha inválida, consulta pendiente,
+corrida en curso o una optimización completada en cualquier página de esa fecha.
+La fecha y la actualización del listado quedan bloqueadas durante el envío.
+
+Validación local del 26/11/2026: cuenta demo del Operador, API real y base
+temporal aislada con 150 pedidos pendientes y 15 vehículos activos. El POST
+respondió 201 con `simulado: false`; se comprobó el resultado en el mapa y el
+bloqueo posterior. Para 05/12/2026, sin pedidos, respondió 422 con el motivo
+legible y la fecha conservada. También se verificó el 422 sin vehículos para
+27/11/2026 y se restauró la flota temporal al terminar. La base temporal no
+utiliza volúmenes anteriores.
+
+Capturas de Chrome:
+
+- [Demo real: Optimizando, 1280 px](<../docs/04 Cierre/img/ECL-138-demo-optimizando-1280.png>).
+- [Demo real: resultado, 1280 px](<../docs/04 Cierre/img/ECL-138-demo-resultado-1280.png>).
+- [Demo real: resultado, 360 px](<../docs/04 Cierre/img/ECL-138-demo-resultado-360.png>).
+- [Validación de interfaz: progreso, 360 px, API simulada](<../docs/04 Cierre/img/ECL-138-ui-simulada-optimizando-360.png>).
+
+La suite existente `e2e/global-setup.ts` sigue creando la optimización por API;
+pasarla al botón queda como mejora posterior, fuera de este ticket.
+
 ## ECL-14: mapa operativo y alternativa accesible
 
 Administrador y Operador pueden abrir `/operacion/rutas` desde «Rutas y alertas».
