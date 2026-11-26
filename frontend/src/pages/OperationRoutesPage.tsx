@@ -4,7 +4,7 @@ import { Alert, Badge, Button, EmptyState, PageHeader } from '../components/ui'
 import { RouteExecution } from '../components/RouteExecution'
 import { InvalidRouteData, operationDateInLima, retainTraffic, routeTime, UNASSIGNED_REASONS, validOperationDate } from '../domain/operationRoutes'
 import type { OptimizationDetail, OptimizationPage } from '../domain/operationRoutes'
-import { OperationRoutesError, operationRoutesApi } from '../services/operationRoutes'
+import { OperationRoutesError, operationRoutesApi, OPTIMIZATION_UNAVAILABLE } from '../services/operationRoutes'
 import type { RouteSource } from '../services/operationRoutes'
 import type { AuthRole } from '../services/auth'
 import type { ClosedRoute, UpdatedStop } from '../domain/routeOutcomes'
@@ -28,6 +28,12 @@ export function OperationRoutesPage({ onSessionExpired, source = operationRoutes
   const [detailBusy, setDetailBusy] = useState(false)
   const [listError, setListError] = useState('')
   const [detailError, setDetailError] = useState('')
+  const [optimizing, setOptimizing] = useState(false)
+  const [optimizationError, setOptimizationError] = useState('')
+  const [generated, setGenerated] = useState(false)
+  const [checkedDate, setCheckedDate] = useState('')
+  const [blockedState, setBlockedState] = useState<'COMPLETADA' | 'EN_PROCESO' | null>(null)
+  const optimizeAbort = useRef<AbortController | null>(null)
   const listRequest = useRef(0), detailRequest = useRef(0)
   const listAbort = useRef<AbortController | null>(null), detailAbort = useRef<AbortController | null>(null)
   const latestDetail = useRef<OptimizationDetail | null>(null)
@@ -57,28 +63,67 @@ export function OperationRoutesPage({ onSessionExpired, source = operationRoutes
       return false
     } finally { if (number === detailRequest.current && !controller.signal.aborted) setDetailBusy(false) }
   }, [source, expire])
-  const loadList = useCallback(async (chosenDate: string, chosenPage: number) => {
+  const loadList = useCallback(async (chosenDate: string, chosenPage: number, preferredId?: string) => {
     const number = ++listRequest.current
     listAbort.current?.abort(); detailAbort.current?.abort(); detailRequest.current++
     const controller = new AbortController(); listAbort.current = controller
-    setListing(null); setSelectedId(''); setDetail(null); latestDetail.current = null
+    setCheckedDate(''); setListing(null); setSelectedId(''); setDetail(null); latestDetail.current = null
     setRouteId(''); setListError(''); setDetailError(''); setListBusy(true); setDetailBusy(false)
     try {
       if (!validOperationDate(chosenDate)) throw new Error('Invalid date')
-      const result = await source.list(chosenDate, chosenPage, controller.signal)
+      let result = await source.list(chosenDate, chosenPage, controller.signal)
+      // Check the whole date: a completed run can be on another page.
+      const items = [...result.items]
+      if (role === 'OPERADOR') {
+        const pageCount = Math.ceil(result.total / result.page_size)
+        for (let index = 1; index <= pageCount; index++) {
+          if (index === chosenPage) continue
+          const other = await source.list(chosenDate, index, controller.signal)
+          items.push(...other.items)
+          if (preferredId && other.items.some(item => item.optimizacion_id === preferredId)) result = other
+        }
+      }
       if (number !== listRequest.current || controller.signal.aborted) return
-      setListing(result); setPage(result.page)
-      if (result.items[0]) void loadDetail(result.items[0].optimizacion_id, chosenDate)
+      setBlockedState(items.some(item => item.estado === 'COMPLETADA') ? 'COMPLETADA'
+        : items.some(item => item.estado === 'EN_PROCESO') ? 'EN_PROCESO' : null)
+      setCheckedDate(chosenDate); setListing(result); setPage(result.page)
+      const id = preferredId ?? result.items[0]?.optimizacion_id
+      if (id) void loadDetail(id, chosenDate)
     } catch (error) {
       if (number === listRequest.current && !controller.signal.aborted && !expire(error)) setListError(safeMessage(error))
     } finally { if (number === listRequest.current && !controller.signal.aborted) setListBusy(false) }
-  }, [source, expire, loadDetail])
+  }, [source, expire, loadDetail, role])
   useEffect(() => {
     let active = true
     const currentList = listRequest, currentDetail = detailRequest
     void Promise.resolve().then(() => { if (active) void loadList(date, 1) })
-    return () => { active = false; currentList.current++; currentDetail.current++; listAbort.current?.abort(); detailAbort.current?.abort() }
+    return () => { active = false; currentList.current++; currentDetail.current++; listAbort.current?.abort(); detailAbort.current?.abort(); optimizeAbort.current?.abort() }
   }, [date, loadList])
+  const optimizeReason = !validOperationDate(date) ? 'Elige una fecha válida para optimizar.'
+    : optimizing ? 'Hay una optimización en curso. Espera a que termine.'
+    : listBusy || checkedDate !== date ? 'Consulta las optimizaciones de esta fecha antes de generar rutas.'
+    : blockedState === 'COMPLETADA' ? 'Esta fecha ya tiene una optimización completada.'
+    : blockedState === 'EN_PROCESO' ? 'Esta fecha tiene una optimización en proceso. Actualiza el listado para consultar su resultado.' : ''
+  async function optimizeDate() {
+    if (role !== 'OPERADOR' || optimizeAbort.current || optimizeReason) return
+    const controller = new AbortController(); optimizeAbort.current = controller
+    setOptimizing(true); setOptimizationError(''); setGenerated(false)
+    try {
+      const result = await source.optimize(date, controller.signal)
+      if (controller.signal.aborted) return
+      setGenerated(true)
+      await loadList(date, 1, result.optimizacion_id)
+    } catch (error) {
+      if (!controller.signal.aborted && !expire(error)) {
+        setOptimizationError(error instanceof OperationRoutesError ? error.message : OPTIMIZATION_UNAVAILABLE)
+      }
+    } finally {
+      if (optimizeAbort.current === controller) {
+        optimizeAbort.current = null
+        if (!controller.signal.aborted) setOptimizing(false)
+      }
+    }
+  }
   const route = detail?.rutas.find(r => r.ruta_id === routeId)
   const pages = listing ? Math.max(1, Math.ceil(listing.total / listing.page_size)) : 1
   function updateRoute(result: UpdatedStop | ClosedRoute) {
@@ -99,23 +144,31 @@ export function OperationRoutesPage({ onSessionExpired, source = operationRoutes
       breadcrumbs={[{ label: 'Inicio', to: '/' }, { label: 'Rutas y alertas en mapa' }]} />
     <section className="card route-filters" aria-label="Consulta de optimizaciones">
       <div className="form-field"><label htmlFor="route-date">Fecha de operación</label>
-        <input id="route-date" type="date" value={date} required onChange={event => setDate(event.target.value)} /></div>
-      <Button variant="secondary" icon={RefreshCw} disabled={listBusy || !validOperationDate(date)} onClick={() => { void loadList(date, 1) }}>Actualizar optimizaciones</Button>
+        <input id="route-date" type="date" value={date} required disabled={optimizing} onChange={event => { setOptimizationError(''); setGenerated(false); setDate(event.target.value) }} /></div>
+      <Button variant="secondary" icon={RefreshCw} disabled={optimizing || listBusy || !validOperationDate(date)} onClick={() => { void loadList(date, 1) }}>Actualizar optimizaciones</Button>
+      {role === 'OPERADOR' ? <>
+        <Button variant="primary" disabled={Boolean(optimizeReason)} aria-describedby="optimize-reason"
+          onClick={() => { void optimizeDate() }}>{optimizing ? 'Optimizando…' : 'Optimizar fecha'}</Button>
+        <p id="optimize-reason">{optimizeReason || 'Genera rutas para la fecha elegida.'}</p>
+      </> : null}
       {listing?.items.length ? <div className="form-field"><label htmlFor="optimization-select">Optimización</label>
         <select id="optimization-select" value={selectedId} onChange={event => { latestDetail.current = null; setDetail(null); void loadDetail(event.target.value, date) }}>
           {listing.items.map(item => <option key={item.optimizacion_id} value={item.optimizacion_id}>{routeTime(item.solicitada_en)} · {STATE[item.estado]} · {item.optimizacion_id.slice(0, 8)}</option>)}
         </select></div> : null}
     </section>
+    {optimizing ? <p role="status">Calculando rutas para {date}. Puede tardar hasta 30 segundos.</p> : null}
+    {generated ? <p role="status">Rutas generadas</p> : null}
+    {optimizationError ? <Alert tone="danger" title="No se pudo optimizar">{optimizationError}</Alert> : null}
     {listing?.simulado || detail?.simulado ? <Alert tone="warning" title="Datos simulados">Plan de demostración, sin tráfico real confirmado. El trazado no acredita una red vial medida.</Alert> : null}
     {listBusy ? <p role="status">Consultando optimizaciones…</p> : null}
     {listError ? <Alert tone="danger" title="No se pudo consultar la fecha">{listError}</Alert> : null}
     {listing?.total === 0 ? <EmptyState icon={Map} headingLevel={2} title="Sin optimizaciones en esta fecha">
-      <p>Solicita al responsable de optimización que genere una solución para esta fecha y actualiza el listado.</p>
+      <p>{role === 'OPERADOR' ? 'Pulsa Optimizar fecha para generar las rutas.' : 'Solicita al responsable de optimización que genere una solución para esta fecha y actualiza el listado.'}</p>
     </EmptyState> : null}
     {listing && listing.total > 0 ? <nav className="pagination" aria-label="Páginas de optimizaciones">
-      <Button variant="secondary" disabled={listBusy || page <= 1} onClick={() => { void loadList(date, page - 1) }}>Anterior</Button>
+      <Button variant="secondary" disabled={optimizing || listBusy || page <= 1} onClick={() => { void loadList(date, page - 1) }}>Anterior</Button>
       <span>Página {page} de {pages}</span>
-      <Button variant="secondary" disabled={listBusy || page >= pages} onClick={() => { void loadList(date, page + 1) }}>Siguiente</Button>
+      <Button variant="secondary" disabled={optimizing || listBusy || page >= pages} onClick={() => { void loadList(date, page + 1) }}>Siguiente</Button>
     </nav> : null}
     {detailBusy ? <p role="status">Consultando el plan seleccionado…</p> : null}
     {detailError ? <Alert tone="danger" title="No se pudo cargar el plan" actions={<Button variant="secondary" onClick={() => { void loadDetail(selectedId, date) }}>Reintentar plan</Button>}>

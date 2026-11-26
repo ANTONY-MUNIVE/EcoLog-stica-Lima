@@ -10,6 +10,9 @@ export interface OptimizationSummary {
 export interface OptimizationPage {
   items: OptimizationSummary[]; page: number; page_size: number; total: number; simulado: boolean
 }
+export interface OptimizationCreated {
+  optimizacion_id: string; estado: 'COMPLETADA'; solicitada_en: string; simulado: boolean
+}
 export interface RouteStop {
   parada_id: string; pedido_id: string; secuencia: number
   latitud: number; longitud: number
@@ -90,6 +93,11 @@ function summary(value: unknown): OptimizationSummary {
   const v = object(value)
   return { optimizacion_id: id(v.optimizacion_id), estado: choice(v.estado, ['EN_PROCESO', 'COMPLETADA', 'FALLIDA']),
     fecha_operacion: date(v.fecha_operacion), solicitada_en: instant(v.solicitada_en) }
+}
+export function parseOptimizationCreated(value: unknown): OptimizationCreated {
+  const v = object(value)
+  return { optimizacion_id: id(v.optimizacion_id), estado: choice(v.estado, ['COMPLETADA']),
+    solicitada_en: instant(v.solicitada_en), simulado: boolean(v.simulado) }
 }
 export function parseOptimizationPage(value: unknown): OptimizationPage {
   const v = object(value), items = array(v.items).map(summary)
