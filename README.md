@@ -11,6 +11,46 @@
 
 Repositorio de documentación y desarrollo del proyecto académico EcoLogística Lima. La solución propone una plataforma web para gestión operativa, optimización VRPTW/Green VRP, seguimiento geográfico, analítica y reportes de sostenibilidad.
 
+## Contenido
+
+| Sección | Qué encuentras |
+|---|---|
+| [Evaluación final · Cierre del proyecto](#evaluación-final--cierre-del-proyecto) | Los 7 documentos de cierre, el video y la guía de despliegue |
+| [Inspección 5 · Sprint 4](#inspección-5--sprint-4-calidad-cicd-y-usabilidad) | Revisión, retrospectiva, Playwright, usabilidad y workflows |
+| [Estructura del repositorio](#estructura-del-repositorio) | Carpetas y tecnologías |
+| [Equipo](#equipo) | Integrantes y roles |
+| [Arranque local con Docker Compose](#arranque-local-con-docker-compose--ecl-29) | Cómo levantar la aplicación en local |
+| [Fase 01: Inicio y línea base](#fase-01-inicio-y-línea-base) | Acta de constitución y documentos de inicio |
+| [Fase 02: Planificación del Proyecto](#fase-02-planificación-del-proyecto) | Backlog, presupuesto, riesgos y BDD |
+| [Fase 03: Implementación](#fase-03-implementación) | Entregables por sprint |
+| [Fase 04: Contribución](#fase-04-contribución) | Política de pull requests y reglas para agentes |
+| [Evidencias](#evidencias) | Evidencias ejecutables del backend y del frontend |
+
+## Evaluación final · Cierre del proyecto
+
+Sustentación final: viernes 04/12/2026, 14:20 (G5117). Aplicación en producción:
+<https://ecologistica-web-9tkq.onrender.com>.
+
+Documentos de cierre en [`docs/04 Cierre`](<docs/04 Cierre>). Cada enlace se
+agrega cuando su documento se integra a `main`; cada PR reemplaza solo la línea
+de comentario con su ticket.
+
+<!-- ECL-128 -->
+<!-- ECL-129 -->
+<!-- ECL-130 -->
+<!-- ECL-131 -->
+<!-- ECL-132 -->
+<!-- ECL-133 -->
+<!-- ECL-134 -->
+
+Video del proyecto en [`docs/05 Video proyecto`](<docs/05 Video proyecto>):
+
+<!-- ECL-135 video -->
+
+Despliegue en producción:
+
+<!-- ECL-137 guía de despliegue -->
+
 ## Inspección 5 · Sprint 4: calidad, CI/CD y usabilidad
 
 Aplicación en producción: <https://ecologistica-web-9tkq.onrender.com>
