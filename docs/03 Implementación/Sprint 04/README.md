@@ -21,7 +21,7 @@ No representan resultados ejecutados ni documentos aprobados.
 - [ECL-102 — 04 OWASP V_1_0_0](<04 OWASP V_1_0_0.md>)
 
 <!-- ECL-103 WCAG -->
-- [ECL-103 — 05 WCAG V_1_0_0](<05 WCAG V_1_0_0.md>)
+- [ECL-103 — 05 WCAG V_1_1_0](<05 WCAG V_1_1_0.md>) · [versión anterior V_1_0_0](<05 WCAG V_1_0_0.md>)
 
 <!-- ECL-104 Matriz final -->
 - [ECL-104 — Matriz de trazabilidad del MVP V_1_0_0](<Matriz de trazabilidad del MVP V_1_0_0.md>)

@@ -1,0 +1,38 @@
+{
+  "tipo": "Consolidación documental histórica más declaración manual; no nueva evaluación completa de Render",
+  "metodo_huellas": "SHA-256 de los bytes de la copia de trabajo local en Windows; no son identificadores de objetos Git ni una normalización entre sistemas operativos",
+  "principios": {
+    "1": {
+      "aplicables": 12,
+      "cumple": 12,
+      "porcentaje_consolidado": 100.0
+    },
+    "2": {
+      "aplicables": 15,
+      "cumple": 15,
+      "porcentaje_consolidado": 100.0
+    },
+    "3": {
+      "aplicables": 9,
+      "cumple": 9,
+      "porcentaje_consolidado": 100.0
+    },
+    "4": {
+      "aplicables": 2,
+      "cumple": 2,
+      "porcentaje_consolidado": 100.0
+    }
+  },
+  "cambio": "1.3.2 pasa de por_confirmar a cumple por confirmación declarada",
+  "fuentes_historicas_sha256": {
+    "docs/03 Implementación/Sprint 04/05 WCAG V_1_0_0.md": "76d69ba8c5ee3b4430cccd47c83d5f44f4d4578b8ad4232ae14366cdfbcf6644",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/axe-resultados.json": "6a1bbb9a00f5195a315419f10e8d96b64d849ceb2e4586eabd50931c6ad23048",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/matriz-criterios-sprint4.csv": "0b7a243fb3cfbc7c52db234f4c490ece0615d054d1044540643241a88312a906",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/scripts/axe.js": "1571c9fc99cf90377967e1524b9c48c75f3078e5c8e7655f3e5093b84823e89c",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/scripts/kbd.js": "60fd6b631c1d9d4ed271dc4432bb8013effb905ec26af9e7a03aa568445616e4",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/scripts/lib.js": "ac47aa1b8ba3dfb6ccfbbf4a51f333785771eaa751e68e1441098f99348b0dc6",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/scripts/sondeo-reflujo.js": "eb4c920d919873a5e389ec290bb333916bf64fa861c79ff9077a5ed413345d37",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/scripts/titulos.js": "97fd3f599217c67fe8769a8721462d3e9fdaec01171f68df71ab6deadbc5c143",
+    "docs/03 Implementación/Sprint 04/evidencias/ECL-103/sondeos.json": "15ba97034ed42e3140d71c1f88454db558399e4b11c624f1b51737508d0041c0"
+  }
+}
