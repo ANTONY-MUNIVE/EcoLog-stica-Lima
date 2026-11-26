@@ -1,7 +1,7 @@
 import raw from '../test/fixtures/rutas/sostenibilidad-con-datos.json'
 import empty from '../test/fixtures/rutas/sostenibilidad-sin-datos.json'
 import { InvalidSustainability, parseSustainability, validPeriod } from '../domain/sustainability'
-import { sustainabilityApi, SustainabilityError } from './sustainability'
+import { reportFileName, sustainabilityApi, SustainabilityError } from './sustainability'
 
 const period = raw.periodo
 const controller = () => new AbortController()
@@ -71,4 +71,38 @@ it('distingue desconexión, aborto y JSON inválido sin divulgar detalles', asyn
 it('rechaza un cuerpo UTF-8 que excede 250000 bytes', async () => {
   vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify({ ...raw, extra: 'á'.repeat(125000) })))
   await expect(sustainabilityApi.load(period, controller().signal)).rejects.toBeInstanceOf(InvalidSustainability)
+})
+
+// --- US-010: reporte PDF ---------------------------------------------------------
+const pdfResponse = (body: BodyInit = '%PDF-1.4 contenido', type = 'application/pdf', status = 200) =>
+  vi.mocked(fetch).mockResolvedValue(new Response(body, { status, headers: { 'content-type': type } }))
+it('US-010 pide el PDF del periodo con cookie y sin caché', async () => {
+  pdfResponse()
+  const file = await sustainabilityApi.report(period, controller().signal)
+  expect(file.size).toBeGreaterThan(0)
+  expect(fetch).toHaveBeenCalledWith(`http://127.0.0.1:8000/indicadores/sostenibilidad/reporte?desde=${period.desde}&hasta=${period.hasta}`,
+    expect.objectContaining({ credentials: 'include', cache: 'no-store', signal: expect.any(AbortSignal) as AbortSignal }))
+  expect(reportFileName({ desde: '2026-11-01', hasta: '2026-11-30' })).toBe('reporte-sostenibilidad-2026-11-01-a-2026-11-30.pdf')
+})
+it.each([[401, 'unauthorized'], [403, 'forbidden'], [404, 'no_data'], [422, 'invalid_period'], [503, 'report_unavailable']])(
+  'US-010 HTTP %s del reporte se traduce a %s sin divulgar el detalle', async (status, kind) => {
+    pdfResponse(JSON.stringify({ detail: 'PRIVATE_UNTRUSTED_DETAIL' }), 'application/json', Number(status))
+    const error = await sustainabilityApi.report(period, controller().signal).catch((e: unknown) => e)
+    expect(error).toMatchObject({ kind }); expect(String(error)).not.toContain('PRIVATE_UNTRUSTED_DETAIL')
+  })
+it.each([
+  ['un HTML en vez de PDF', () => pdfResponse('<html></html>', 'text/html')],
+  ['un PDF vacío', () => pdfResponse('')],
+  ['un archivo de más de 5 MB', () => pdfResponse(new Uint8Array(5_000_001))],
+  ['una desconexión', () => vi.mocked(fetch).mockRejectedValue(new Error('private'))],
+])('US-010 rechaza %s', async (_name, prepare) => {
+  prepare()
+  await expect(sustainabilityApi.report(period, controller().signal)).rejects.toMatchObject({ kind: 'report_unavailable' })
+})
+it('US-010 valida el periodo antes de pedir y respeta el aborto', async () => {
+  await expect(sustainabilityApi.report({ desde: period.hasta, hasta: period.desde }, controller().signal)).rejects.toMatchObject({ kind: 'invalid_period' })
+  expect(fetch).not.toHaveBeenCalled()
+  vi.mocked(fetch).mockRejectedValue(new Error('aborted'))
+  const aborted = controller(); aborted.abort()
+  await expect(sustainabilityApi.report(period, aborted.signal)).rejects.toThrow('aborted')
 })

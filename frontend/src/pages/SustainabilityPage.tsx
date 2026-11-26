@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { BarChart3, CheckCircle2, Leaf, Route } from 'lucide-react'
+import { BarChart3, CheckCircle2, Download, Leaf, Route } from 'lucide-react'
 import { Alert, Button, Card, DataTable, EmptyState, PageHeader, StatCard } from '../components/ui'
 import type { Column } from '../components/ui'
 import { operationDateInLima } from '../domain/operationRoutes'
 import { InvalidSustainability, METRICS, validPeriod } from '../domain/sustainability'
 import type { Period, Sustainability } from '../domain/sustainability'
-import { sustainabilityApi, SustainabilityError } from '../services/sustainability'
+import { reportFileName, sustainabilityApi, SustainabilityError } from '../services/sustainability'
 import type { SustainabilitySource } from '../services/sustainability'
 import '../styles/sustainability.css'
 
@@ -53,6 +53,56 @@ function Results({ data }: { data: Sustainability }) {
 }
 
 type View = { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; data: Sustainability }
+type ReportState = { status: 'idle' } | { status: 'loading' } | { status: 'done'; file: string } | { status: 'error'; message: string }
+
+function saveFile(file: Blob, name: string) {
+  const url = URL.createObjectURL(file)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = name
+  document.body.append(link)
+  link.click()
+  link.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 0)
+}
+
+/** US-010: downloads the PDF of the period on screen, never of edited filters.
+ * Keyed by period in the parent, so a new period starts from a clean state. */
+function ReportDownload({ data, source, onSessionExpired }: {
+  data: Sustainability; source: SustainabilitySource; onSessionExpired: () => void
+}) {
+  const [state, setState] = useState<ReportState>({ status: 'idle' })
+  const controller = useRef<AbortController | null>(null)
+  const { desde, hasta } = data.periodo
+  useEffect(() => () => controller.current?.abort(), [])
+  async function download() {
+    controller.current?.abort()
+    const pending = new AbortController(); controller.current = pending
+    setState({ status: 'loading' })
+    try {
+      const period = { desde, hasta }
+      const file = await source.report(period, pending.signal)
+      if (pending.signal.aborted) return
+      saveFile(file, reportFileName(period))
+      setState({ status: 'done', file: reportFileName(period) })
+    } catch (error) {
+      if (pending.signal.aborted) return
+      if (error instanceof SustainabilityError && error.kind === 'unauthorized') onSessionExpired()
+      setState({ status: 'error', message: error instanceof SustainabilityError ? error.message : 'No se pudo generar el reporte. Intenta de nuevo.' })
+    }
+  }
+  const noData = !data.con_datos
+  return <div className="sustainability-report">
+    <Button variant="secondary" icon={Download} onClick={() => void download()}
+      disabled={noData || state.status === 'loading'} aria-describedby={noData ? 'sustainability-report-hint' : undefined}>
+      {state.status === 'loading' ? 'Generando reporte…' : 'Descargar reporte PDF'}
+    </Button>
+    {noData ? <p id="sustainability-report-hint" className="field-hint">No existe información suficiente para generar el reporte de este periodo.</p> : null}
+    <p role="status" className="field-hint">{state.status === 'loading' ? 'Generando el reporte PDF del periodo aplicado…'
+      : state.status === 'done' ? `Reporte descargado: ${state.file}` : ''}</p>
+    {state.status === 'error' ? <Alert tone="danger" title="No se pudo descargar el reporte">{state.message}</Alert> : null}
+  </div>
+}
 export function SustainabilityPage({ onSessionExpired, source = sustainabilityApi }: {
   onSessionExpired: () => void; source?: SustainabilitySource
 }) {
@@ -114,6 +164,7 @@ export function SustainabilityPage({ onSessionExpired, source = sustainabilityAp
     {view.status === 'error' ? <Alert tone="danger" title="No se pudo consultar el periodo">{view.message}</Alert> : null}
     {data ? <>
       <p role="status">Periodo aplicado: <strong>{dateLabel(data.periodo.desde)} — {dateLabel(data.periodo.hasta)}</strong> · Lima, ambos días incluidos.</p>
+      <ReportDownload key={`${data.periodo.desde}|${data.periodo.hasta}`} data={data} source={source} onSessionExpired={onSessionExpired} />
       {data.simulado ? <Alert tone="warning" title="Datos de prueba">El servicio devuelve datos de demostración. Estas cifras no acreditan resultados operativos ni ambientales reales.</Alert> : null}
       <Results data={data} />
     </> : null}

@@ -11,7 +11,8 @@ import { SustainabilityPage } from './SustainabilityPage'
 vi.mock('../domain/operationRoutes', async original => ({ ...await original<typeof import('../domain/operationRoutes')>(), operationDateInLima: () => '2026-11-20' }))
 let source: SustainabilitySource
 const data = (period: Period) => parseSustainability({ ...raw, periodo: period }, period)
-beforeEach(() => { source = { load: vi.fn().mockImplementation((p: Period) => Promise.resolve(data(p))) } })
+const pdf = () => new Blob(['%PDF-1.4'], { type: 'application/pdf' })
+beforeEach(() => { source = { load: vi.fn().mockImplementation((p: Period) => Promise.resolve(data(p))), report: vi.fn().mockImplementation(() => Promise.resolve(pdf())) } })
 function show() { const expired = vi.fn(); return { ...render(<SustainabilityPage source={source} onSessionExpired={expired} />), expired } }
 const loaded = () => screen.findByRole('table')
 const submit = () => fireEvent.click(screen.getByRole('button', { name: 'Consultar periodo' }))
@@ -107,4 +108,74 @@ it('descarta respuestas fuera de orden y aborta al desmontar', async () => {
 it('un error inesperado no divulga mensajes internos', async () => {
   vi.mocked(source.load).mockRejectedValueOnce(new Error('PRIVATE_DETAIL'))
   show(); expect(await screen.findByRole('alert')).not.toHaveTextContent('PRIVATE_DETAIL')
+})
+
+// --- US-010: reporte PDF ---------------------------------------------------------
+const reportButton = () => screen.getByRole('button', { name: /Descargar reporte PDF|Generando reporte/ })
+const spies: { mockRestore: () => void }[] = []
+function stubDownload() {
+  const create = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:reporte')
+  const revoke = vi.spyOn(URL, 'revokeObjectURL').mockReturnValue(undefined)
+  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+    expect(this.download).toBe('reporte-sostenibilidad-2026-11-01-a-2026-11-20.pdf'); expect(this.href).toBe('blob:reporte')
+  })
+  spies.push(create, revoke, click)
+  return { create, revoke, click }
+}
+afterEach(() => { spies.splice(0).forEach(spy => spy.mockRestore()) })
+
+it('US-010 descarga el PDF del periodo aplicado aunque los filtros estén editados', async () => {
+  const { create, click } = stubDownload()
+  show(); await loaded()
+  choose('2026-11-08', '2026-11-08')
+  fireEvent.click(reportButton())
+  expect(await screen.findByText('Reporte descargado: reporte-sostenibilidad-2026-11-01-a-2026-11-20.pdf')).toBeInTheDocument()
+  expect(source.report).toHaveBeenCalledWith({ desde: '2026-11-01', hasta: '2026-11-20' }, expect.any(AbortSignal))
+  expect(create).toHaveBeenCalledOnce(); expect(click).toHaveBeenCalledOnce()
+  expect(document.querySelector('a[download]')).toBeNull()
+})
+it('US-010 sin rutas cerradas informa que no hay información suficiente y no descarga', async () => {
+  vi.mocked(source.load).mockImplementation(p => Promise.resolve(parseSustainability({ ...empty, periodo: p }, p)))
+  show(); await screen.findByRole('heading', { name: 'Sin datos para este periodo' })
+  expect(reportButton()).toBeDisabled()
+  expect(reportButton()).toHaveAccessibleDescription('No existe información suficiente para generar el reporte de este periodo.')
+  expect(source.report).not.toHaveBeenCalled()
+})
+it('US-010 mientras se genera no admite doble clic y anuncia el progreso', async () => {
+  let resolve!: (file: Blob) => void
+  vi.mocked(source.report).mockImplementationOnce(() => new Promise(done => { resolve = done }))
+  stubDownload(); show(); await loaded()
+  fireEvent.click(reportButton())
+  expect(reportButton()).toBeDisabled(); expect(reportButton()).toHaveTextContent('Generando reporte…')
+  expect(screen.getByText('Generando el reporte PDF del periodo aplicado…')).toBeInTheDocument()
+  fireEvent.click(reportButton()); expect(source.report).toHaveBeenCalledOnce()
+  await act(async () => { resolve(pdf()); await Promise.resolve() })
+  expect(await screen.findByText(/Reporte descargado/)).toBeInTheDocument()
+})
+it.each([
+  [new SustainabilityError('no_data'), 'No existe información suficiente'],
+  [new SustainabilityError('report_unavailable'), 'No se pudo generar el reporte'],
+  [new Error('PRIVATE_DETAIL'), 'No se pudo generar el reporte'],
+])('US-010 un error del reporte se explica sin ocultar el dashboard: %#', async (error, text) => {
+  vi.mocked(source.report).mockRejectedValueOnce(error)
+  show(); await loaded(); fireEvent.click(reportButton())
+  const alert = await screen.findByRole('alert')
+  expect(alert).toHaveTextContent(text); expect(alert).not.toHaveTextContent('PRIVATE_DETAIL')
+  expect(screen.getByRole('table')).toBeInTheDocument(); expect(reportButton()).toBeEnabled()
+})
+it('US-010 una sesión vencida al descargar vuelve al login', async () => {
+  vi.mocked(source.report).mockRejectedValueOnce(new SustainabilityError('unauthorized'))
+  const { expired } = show(); await loaded(); fireEvent.click(reportButton())
+  await waitFor(() => expect(expired).toHaveBeenCalledOnce())
+})
+it('US-010 al cambiar de periodo o desmontar se cancela la descarga pendiente', async () => {
+  vi.mocked(source.report).mockImplementation(() => new Promise(() => undefined))
+  const rendered = show(); await loaded(); fireEvent.click(reportButton())
+  const first = vi.mocked(source.report).mock.calls[0][1]
+  choose('2026-11-08', '2026-11-08'); submit()
+  await waitFor(() => expect(screen.getByText(/08\/11\/2026 — 08\/11\/2026/)).toBeInTheDocument())
+  expect(first.aborted).toBe(true); expect(reportButton()).toBeEnabled()
+  fireEvent.click(reportButton())
+  const second = vi.mocked(source.report).mock.calls[1][1]
+  rendered.unmount(); expect(second.aborted).toBe(true)
 })

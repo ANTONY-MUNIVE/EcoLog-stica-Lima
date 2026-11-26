@@ -5,7 +5,10 @@
 .sustainability-page .card { min-width: 0; }
 .sustainability-page code { overflow-wrap: anywhere; }
 .sustainability-page h3 { margin-block: var(--space-4) var(--space-2); }
+.sustainability-report { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); }
+.sustainability-report .field-hint { margin: 0; }
+.sustainability-report .alert { flex-basis: 100%; }
 @media (max-width: 35rem) {
   .sustainability-filters { align-items: stretch; }
-  .sustainability-filters > button { width: 100%; }
+  .sustainability-filters > button, .sustainability-report > button { width: 100%; }
 }
