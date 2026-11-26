@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "date": "2026-11-26T21:45:48.113Z",
+  "browser": "158.0.8127.37",
+  "source": "Chrome real, dos builds con código ECL-139 y cambio temporal del encabezado; sin API ni credenciales",
+  "builds": {
+    "a": "32d034f0a9c9c8580978bcbe0df5512f19d98697076fe2ea74fa9ff31403c574",
+    "b": "05b98a921804a22838a68a13a0c3f67e7d07b72a02ac777fa189a37b8dcad086"
+  },
+  "sources": {
+    "src/services/offlineShell.ts": "270d824fcc3cf9c5b78451730befca22c5ae26fadcfefbaeef73edd734f4f089",
+    "src/components/ShellUpdateNotice.tsx": "b716d4611567a45b857067d57e4e040f594b36590945c3b584cb3468b79fc8a1",
+    "src/app/App.tsx": "ed7996f4ee31d77a79af91fee429b35391bb1d1eb93d12010e679d3e5ea34c88",
+    "src/styles/components.css": "f565a22a99c419272e025449c6d78065796ef046c507ca8ec804d44d0285342f",
+    "public/sw.js": "00cea56f00f1f11f125c96777ea84be4e2b9b02ed0d16bcbe71ea6f7cf0b92ec"
+  },
+  "records": [
+    {
+      "width": 1280,
+      "theme": "light",
+      "firstInstallNotice": false,
+      "waitingState": "installed",
+      "afterAcceptance": "activated",
+      "acceptanceNavigations": 1,
+      "peerNavigations": 1,
+      "offlineVerificationReloads": 1,
+      "offlineAfterUpdate": true,
+      "axeViolations": 0,
+      "axeIncomplete": []
+    },
+    {
+      "width": 360,
+      "theme": "dark",
+      "firstInstallNotice": false,
+      "waitingState": "installed",
+      "afterAcceptance": "activated",
+      "acceptanceNavigations": 1,
+      "peerNavigations": 1,
+      "offlineVerificationReloads": 1,
+      "offlineAfterUpdate": true,
+      "axeViolations": 0,
+      "axeIncomplete": []
+    }
+  ]
+}
