@@ -151,7 +151,7 @@ jobs:
 
       - name: Upload backend unit evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: backend-unit-results-${{ github.run_id }}
           path: backend/test-results/
@@ -219,7 +219,7 @@ jobs:
 
       - name: Upload backend integration evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: backend-integration-results-${{ github.run_id }}
           path: backend/test-results/
@@ -265,7 +265,7 @@ jobs:
 
       - name: Upload frontend test evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: frontend-test-results-${{ github.run_id }}
           path: |
@@ -311,22 +311,22 @@ jobs:
 
       - name: Download backend coverage
         if: steps.token.outputs.present == 'true'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: backend-unit-results-${{ github.run_id }}
           path: coverage-reports/backend
 
       - name: Download frontend coverage
         if: steps.token.outputs.present == 'true'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: frontend-test-results-${{ github.run_id }}
           path: coverage-reports/frontend
 
       - name: Normalize and verify coverage paths
         if: steps.token.outputs.present == 'true'
-        # Reports are relative to backend/ and frontend/; Sonar reads from the
-        # repository root. Fail if any covered file does not exist in the repo.
+        # Reports are relative to backend/ and frontend/. Fail if any covered file
+        # does not exist in the repo.
         run: |
           python3 - <<'PY'
           import os
@@ -340,9 +340,12 @@ jobs:
                   sys.exit(f"Missing coverage report: {path}")
 
           xml = open(xml_path, encoding="utf-8").read()
-          xml = xml.replace("<source>app</source>", "<source>backend/app</source>")
+          # Absolute: the new SonarQube Cloud scope analyzes backend/ as its own
+          # module, so a path relative to the repository root does not resolve.
+          backend_app = os.path.abspath("backend/app")
+          xml = xml.replace("<source>app</source>", f"<source>{backend_app}</source>")
           sources = re.findall(r"<source>([^<]*)</source>", xml)
-          if sources != ["backend/app"]:
+          if sources != [backend_app]:
               sys.exit(f"Unexpected coverage.xml sources: {sources}")
           files = re.findall(r'filename="([^"]+)"', xml)
           missing = [f for f in files if not os.path.isfile(f"backend/app/{f}")]

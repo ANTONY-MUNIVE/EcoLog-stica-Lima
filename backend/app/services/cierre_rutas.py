@@ -15,7 +15,9 @@ Rules from the ratified US-009 BDD (v1.0.0):
 """
 
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -64,6 +66,37 @@ class ResultadoInvalido(ValueError):
 
 class CierreUnavailable(RuntimeError):
     """Sanitized storage failure."""
+
+
+class SinInformacion(LookupError):
+    """US-010: the period has no closed routes to report."""
+
+
+# US-010: route rows printed in one PDF. A longer period is cut here and the
+# report says so, instead of building hundreds of pages on the free plan.
+MAX_RUTAS_REPORTE = 500
+
+
+@dataclass(frozen=True)
+class RutaReporte:
+    fecha_operacion: date
+    placa: str
+    cerrada_en: datetime
+    paradas_atendidas: int
+    paradas_terminales: int
+    distancia_km: float
+    co2_kg: float
+    combustible_l: float
+    costo_soles: float
+    ahorro_co2_kg: float
+
+
+@dataclass(frozen=True)
+class ReporteSostenibilidad:
+    indicadores: IndicadoresSostenibilidad
+    rutas: list[RutaReporte]
+    truncado: bool
+    generado_en: datetime
 
 
 class IndicadoresIncompletos(RuntimeError):
@@ -222,6 +255,54 @@ class CierreRutaService:
             parametros_versiones=versiones,
             simulado=False,
         )
+
+    # --- GET /indicadores/sostenibilidad/reporte --------------------------
+    def reporte(self, desde: date, hasta: date) -> ReporteSostenibilidad:
+        """US-010: the US-009 aggregate plus one row per closed route.
+
+        The totals come from ``indicadores`` so the PDF and the dashboard can
+        never disagree. Without closed routes there is nothing to report.
+        """
+        indicadores = self.indicadores(desde, hasta)
+        if not indicadores.con_datos:
+            raise SinInformacion("No closed routes in the period")
+        try:
+            with self._factory() as session:
+                filas = CierreRutaRepository(session).detalle_rutas(
+                    medianoche(desde),
+                    medianoche(hasta + timedelta(days=1)),
+                    MAX_RUTAS_REPORTE + 1,
+                )
+        except (CierreStorageError, SQLAlchemyError):
+            raise CierreUnavailable("Report unavailable") from None
+        rutas = [_ruta_reporte(fila) for fila in filas[:MAX_RUTAS_REPORTE]]
+        return ReporteSostenibilidad(
+            indicadores=indicadores,
+            rutas=rutas,
+            truncado=len(filas) > MAX_RUTAS_REPORTE,
+            generado_en=self._reloj().astimezone(LIMA),
+        )
+
+
+def _ruta_reporte(fila: Any) -> RutaReporte:
+    co2 = a_float(fila["co2_kg"])
+    secuencial = fila["secuencial_co2_kg"]
+    if secuencial is None:
+        # A closed route always has its reference (ECL-119 refuses the closure
+        # otherwise); a missing one means corrupted data, not a zero saving.
+        raise IndicadoresIncompletos("Closed route without sequential reference")
+    return RutaReporte(
+        fecha_operacion=fila["fecha_operacion"],
+        placa=fila["placa"],
+        cerrada_en=fila["cerrada_en"].astimezone(LIMA),
+        paradas_atendidas=int(fila["paradas_atendidas"]),
+        paradas_terminales=int(fila["paradas_terminales"]),
+        distancia_km=a_float(fila["distancia_km"]),
+        co2_kg=co2,
+        combustible_l=a_float(fila["combustible_l"]),
+        costo_soles=a_float(fila["costo_soles"]),
+        ahorro_co2_kg=a_float(secuencial) - co2,
+    )
 
 
 def _parada(parada: ParadaRuta, ruta_estado: str) -> ParadaActualizada:

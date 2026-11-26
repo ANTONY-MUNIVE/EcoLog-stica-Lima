@@ -244,6 +244,45 @@ def test_full_flow_from_optimization_to_the_dashboard(base):
         )
 
 
+def test_report_lists_each_closed_route_with_the_dashboard_totals(base):
+    """US-010 over PostGIS: one row per closed route, totals equal US-009."""
+    from app.services.cierre_rutas import SinInformacion
+    from app.services.reporte_pdf import generar_pdf
+
+    factory, _, ids = base
+    service = CierreRutaService(factory, reloj=lambda: FIN_JORNADA)
+    with pytest.raises(SinInformacion):
+        service.reporte(FECHA, FECHA)
+
+    rutas = []
+    for vehiculo, ventanas in enumerate(([(9, 12), (10, 13)], [(9, 12)])):
+        pedidos = _pedidos(factory, ids["cliente"], ventanas)
+        ruta, paradas = _ruta_optimizada(factory, ids, pedidos, vehiculo=vehiculo)
+        _servir(factory, ruta, paradas, fallidas={paradas[-1].pedido_id})
+        service.cerrar(ruta.ruta_id, ids["operador"])
+        rutas.append(ruta)
+    # A planned route of the same day is not closed and never reported.
+    pendiente = _pedidos(factory, ids["cliente"], [(9, 12)])
+    _ruta_optimizada(factory, ids, pendiente, vehiculo=2)
+
+    reporte = service.reporte(FECHA, FECHA)
+    assert reporte.indicadores == service.indicadores(FECHA, FECHA)
+    assert len(reporte.rutas) == 2 and not reporte.truncado
+    with factory() as session:
+        placas = {session.get(Vehiculo, r.vehiculo_id).placa: r for r in rutas}
+    assert {r.placa for r in reporte.rutas} == set(placas)
+    for fila in reporte.rutas:
+        ruta = placas[fila.placa]
+        assert fila.co2_kg == pytest.approx(ruta.co2_kg)
+        assert fila.ahorro_co2_kg == pytest.approx(ruta.secuencial_co2_kg - ruta.co2_kg)
+        assert fila.paradas_atendidas == fila.paradas_terminales - 1
+        assert fila.cerrada_en == FIN_JORNADA and fila.fecha_operacion == FECHA
+    assert sum(f.co2_kg for f in reporte.rutas) == pytest.approx(
+        reporte.indicadores.co2_kg
+    )
+    assert generar_pdf(reporte).startswith(b"%PDF-1.4")
+
+
 def test_late_service_counts_as_out_of_window(base):
     factory, _, ids = base
     pedidos = _pedidos(factory, ids["cliente"], [(9, 10)])

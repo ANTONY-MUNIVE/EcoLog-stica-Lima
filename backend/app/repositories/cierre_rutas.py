@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.models.pedido import Pedido
 from app.models.ruta import Optimizacion, ParadaRuta, Ruta
+from app.models.vehiculo import Vehiculo
 
 
 class CierreStorageError(RuntimeError):
@@ -116,3 +117,40 @@ class CierreRutaRepository:
             .where(_cerradas(desde, hasta))
         ).one()
         return int(fila[0]), int(fila[1])
+
+    # --- US-010 report ----------------------------------------------------
+    def detalle_rutas(
+        self, desde: datetime, hasta: datetime, limite: int
+    ) -> list[RowMapping]:
+        """One row per closed route: plate, metrics and terminal stops.
+
+        Only the vehicle plate identifies a route; no driver, client or
+        geometry leaves the database.
+        """
+        atendidas = func.count(ParadaRuta.parada_id).filter(
+            ParadaRuta.estado == "ATENDIDA"
+        )
+        terminales = func.count(ParadaRuta.parada_id).filter(
+            ParadaRuta.estado.in_(("ATENDIDA", "NO_ATENDIDA"))
+        )
+        consulta = (
+            select(
+                Ruta.fecha_operacion,
+                Vehiculo.placa,
+                Ruta.cerrada_en,
+                Ruta.distancia_km,
+                Ruta.co2_kg,
+                Ruta.combustible_l,
+                Ruta.costo_soles,
+                Ruta.secuencial_co2_kg,
+                atendidas.label("paradas_atendidas"),
+                terminales.label("paradas_terminales"),
+            )
+            .join(Vehiculo, Vehiculo.vehiculo_id == Ruta.vehiculo_id)
+            .outerjoin(ParadaRuta, ParadaRuta.ruta_id == Ruta.ruta_id)
+            .where(_cerradas(desde, hasta))
+            .group_by(Ruta.ruta_id, Vehiculo.placa)
+            .order_by(Ruta.cerrada_en, Vehiculo.placa)
+            .limit(limite)
+        )
+        return list(self._run(consulta).mappings().all())
