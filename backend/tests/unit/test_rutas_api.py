@@ -409,6 +409,78 @@ def test_driver_cannot_open_the_dashboard():
     assert response.status_code == 403
 
 
+# --- GET /indicadores/sostenibilidad/reporte (US-010) -------------------------
+
+PERIODO = {"desde": "2026-11-01", "hasta": "2026-11-30"}
+
+
+def _reporte():
+    from datetime import datetime
+
+    from app.services.cierre_rutas import LIMA, ReporteSostenibilidad
+
+    datos = rutas_simuladas.RutasSimuladasService().sostenibilidad(
+        date(2026, 11, 1), date(2026, 11, 30)
+    )
+    return ReporteSostenibilidad(
+        indicadores=datos.model_copy(update={"simulado": False}),
+        rutas=[],
+        truncado=False,
+        generado_en=datetime(2026, 11, 25, 10, 0, tzinfo=LIMA),
+    )
+
+
+@pytest.mark.parametrize(
+    "role", [Rol.ADMINISTRADOR, Rol.OPERADOR, Rol.ANALISTA, Rol.AUDITOR]
+)
+def test_authorized_roles_download_the_report_as_pdf(role):
+    with client_for(role) as ctx:
+        ctx.cierres.reporte.return_value = _reporte()
+        response = ctx.client.get("/indicadores/sostenibilidad/reporte", params=PERIODO)
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert response.content.startswith(b"%PDF-1.4")
+    assert response.headers["content-disposition"] == (
+        'attachment; filename="reporte-sostenibilidad-2026-11-01-a-2026-11-30.pdf"'
+    )
+    assert response.headers["Cache-Control"] == "no-store"
+    ctx.cierres.reporte.assert_called_once_with(date(2026, 11, 1), date(2026, 11, 30))
+
+
+def test_report_without_closed_routes_explains_why():
+    from app.services.cierre_rutas import SinInformacion
+
+    with client_for(Rol.ANALISTA) as ctx:
+        ctx.cierres.reporte.side_effect = SinInformacion("x")
+        response = ctx.client.get("/indicadores/sostenibilidad/reporte", params=PERIODO)
+    assert response.status_code == 404
+    assert "información suficiente" in response.json()["detail"]
+
+
+@pytest.mark.parametrize("error", [CierreUnavailable("x"), IndicadoresIncompletos("x")])
+def test_report_failures_are_unavailable(error):
+    with client_for(Rol.ANALISTA) as ctx:
+        ctx.cierres.reporte.side_effect = error
+        response = ctx.client.get("/indicadores/sostenibilidad/reporte", params=PERIODO)
+    assert response.status_code == 503 and "x" not in response.text
+
+
+def test_report_rejects_bad_periods_and_drivers():
+    with client_for(Rol.ANALISTA) as ctx:
+        invertido = ctx.client.get(
+            "/indicadores/sostenibilidad/reporte",
+            params={"desde": "2026-11-30", "hasta": "2026-11-01"},
+        )
+        faltante = ctx.client.get("/indicadores/sostenibilidad/reporte")
+        ctx.cierres.reporte.assert_not_called()
+    assert invertido.status_code == 422 and faltante.status_code == 422
+    with client_for(Rol.CONDUCTOR) as ctx:
+        prohibido = ctx.client.get(
+            "/indicadores/sostenibilidad/reporte", params=PERIODO
+        )
+    assert prohibido.status_code == 403
+
+
 def test_without_data_the_schema_rejects_values_and_vice_versa():
     base = json.loads(
         (FIXTURES / "sostenibilidad-con-datos.json").read_text(encoding="utf-8")
