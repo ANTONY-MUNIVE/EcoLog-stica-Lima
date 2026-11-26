@@ -46,6 +46,7 @@ from app.services.cierre_rutas import (
     IndicadoresIncompletos,
     ResultadoInvalido,
     RutaNoEncontrada,
+    SinInformacion,
 )
 from app.services.optimizaciones import (
     OptimizacionFallida,
@@ -53,6 +54,7 @@ from app.services.optimizaciones import (
     OptimizacionUnavailable,
     SeleccionInvalida,
 )
+from app.services.reporte_pdf import generar_pdf
 
 router = APIRouter(prefix="/optimizaciones", tags=["rutas"], route_class=SanitizedRoute)
 indicadores_router = APIRouter(
@@ -245,6 +247,63 @@ def sustainability_indicators(
         raise _no_disponible() from None
     _marcar(response, indicadores.simulado)
     return indicadores
+
+
+SIN_INFORMACION = (
+    "No existe información suficiente para generar el reporte: el periodo no "
+    "tiene rutas cerradas."
+)
+
+
+@indicadores_router.get(
+    "/sostenibilidad/reporte",
+    response_class=Response,
+    summary="Reporte PDF de sostenibilidad del periodo (US-010)",
+    description=(
+        "Mismo criterio y totales que /indicadores/sostenibilidad, más una fila "
+        "por ruta cerrada (fecha, placa, paradas, emisiones y costo) y el "
+        "cumplimiento de las metas del Acta. El PDF lleva la fecha de "
+        "generación, el periodo aplicado y las versiones de parámetros. Sin "
+        "rutas cerradas responde 404 con el motivo; nunca un PDF vacío."
+    ),
+    responses={
+        200: {
+            "content": {"application/pdf": {}},
+            "description": "Reporte PDF descargable",
+        },
+        **_ERRORS,
+        404: {"description": "El periodo no tiene información suficiente"},
+        503: {"description": "Servicio no disponible"},
+    },
+)
+def sustainability_report(
+    _identity: Annotated[
+        Identidad, Depends(require_permission(Permiso.INDICADORES_CONSULTAR))
+    ],
+    service: Cierres,
+    desde: date,
+    hasta: date,
+) -> Response:
+    if desde > hasta:
+        raise HTTPException(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            "El inicio del periodo es posterior al fin",
+        )
+    try:
+        reporte = service.reporte(desde, hasta)
+    except SinInformacion:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, SIN_INFORMACION) from None
+    except (CierreUnavailable, IndicadoresIncompletos):
+        raise _no_disponible() from None
+    nombre = f"reporte-sostenibilidad-{desde.isoformat()}-a-{hasta.isoformat()}.pdf"
+    return Response(
+        content=generar_pdf(reporte),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{nombre}"',
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 _RUTA_ERRORS = {
