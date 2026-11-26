@@ -8,6 +8,7 @@ import { LoginPage } from '../pages/LoginPage'
 import { DriverShell, PublicShell, StaffShell } from '../components/layout/AppShell'
 import { Alert, Button, EmptyState, LinkButton, ToastProvider, useToast } from '../components/ui'
 import { SessionExpiryNotice } from '../components/SessionExpiryNotice'
+import { ShellUpdateNotice } from '../components/ShellUpdateNotice'
 import { captureSessionDraft, downloadSessionDraft } from '../services/sessionDraft'
 import type { SessionDraft } from '../services/sessionDraft'
 import type { SessionExtension } from '../services/auth'
@@ -58,7 +59,7 @@ function AccessDenied() {
 }
 
 export function App() {
-  return <ToastProvider><AppRoutes /></ToastProvider>
+  return <ToastProvider><AppRoutes /><ShellUpdateNotice /></ToastProvider>
 }
 
 function AppRoutes() {

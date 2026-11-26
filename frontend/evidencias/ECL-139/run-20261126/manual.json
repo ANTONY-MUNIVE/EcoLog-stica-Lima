@@ -1,0 +1,11 @@
+{
+  "registered_at": "2026-11-26T21:47:22.045Z",
+  "tester": "Giancarlo Soto",
+  "source": "Respuesta directa del usuario a la prueba manual en preview local, sin credenciales",
+  "url": "http://127.0.0.1:5190/login",
+  "response": "Apareció el aviso, waiting pasó a activated y vi el texto nuevo",
+  "temporaryHeading": "Iniciar sesión — prueba ECL-139",
+  "recording": false,
+  "narratorTest": false,
+  "renderDeployment": false
+}

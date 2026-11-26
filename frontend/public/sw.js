@@ -29,9 +29,12 @@ self.addEventListener('install', event => {
     } catch (error) { await caches.delete(PREFIX + manifest.version); throw error }
   })())
 })
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') event.waitUntil(self.skipWaiting())
+})
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    // Waiting workers activate only after old tabs close; do not break old chunks.
+    // Activate after old tabs close or explicit user acceptance, never during install.
     for (const name of await caches.keys()) {
       if (name.startsWith(PREFIX) && name !== PREFIX + BUILD_VERSION) await caches.delete(name)
     }

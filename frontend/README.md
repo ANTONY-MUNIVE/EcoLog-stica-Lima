@@ -357,4 +357,76 @@ Ver [VALIDACION_ST027.md](<../docs/03 Implementación/Sprint 02/validaciones/VAL
 [capturas ECL-53](evidencias/ECL-53/README.md) y la
 [guía para José](<../docs/03 Implementación/Sprint 02/guias/GUIA_JOSE_ST027.md>) para resultados, reproducción y PR.
 
+## Actualización del service worker — ECL-139
+
+`registerOfflineShell()` sigue registrando `sw.js` solo en producción. Publica el
+worker en espera a través de `subscribeToShellUpdate` / `getWaitingWorker`;
+`ShellUpdateNotice` muestra «Hay una versión nueva de EcoLogística.» con
+`role="status"`, sin mover el foco, sin modal y sin cierre automático.
+«Más tarde» oculta esa versión durante la vida de la página; una recarga puede
+ofrecerla de nuevo. Una versión distinta vuelve a mostrarse. El aviso se oculta
+sin conexión y al reconectar puede aparecer de nuevo si sigue esperando.
+
+«Actualizar» llama a `applyUpdate()`: envía `{ type: 'SKIP_WAITING' }` al worker
+esperando. Solo el manejador de ese mensaje pide `skipWaiting`; **install no lo
+llama**. Al cambiar realmente el controlador, cada pestaña previamente
+controlada recarga una sola vez para no mezclar código antiguo con los assets
+nuevos. La primera instalación/claim no recarga. El aviso pide guardar los
+formularios porque la aceptación afecta también a las demás pestañas.
+
+El regreso a una pestaña visible consulta `registration.update()` como máximo
+una vez por minuto, sin consultar offline y tolerando errores de red. El
+mensaje y la API de actualización no escriben en la cola offline, no eliminan
+IndexedDB y no cachean respuestas de negocio. Se conservan las navegaciones y
+assets autorizados de la shell. La configuración `serviceWorkers: 'block'` de
+la inyección de fallos de red no se modifica.
+
+### Reproducción y evidencia
+
+- Vitest: `npm run test -- src/services/offlineShell.test.ts src/components/ShellUpdateNotice.test.tsx`.
+  Cubre registro en producción, espera inicial y posterior, primera instalación,
+  mensaje explícito, recarga única y varias pestañas, rechazo/reintento,
+  visibilidad con límite de 60 s, teclado, ocultación y conectividad.
+- Build y prueba real sin cuentas ni base: desde la raíz, con Node/npm y Chrome,
+  `node frontend/scripts/verify-shell-update.mjs`. Construye A y B con un cambio
+  temporal de encabezado de login, sirve copias por HTTP local, prueba waiting →
+  activated en dos pestañas por contexto, una recarga de actualización por
+  pestaña y otra explícita para comprobar la shell offline. Incluye 1280 px
+  claro, 360 px oscuro y axe después de terminar la transición de tema.
+  Restaura el archivo fuente en `finally` y deja `dist` reconstruido sin el texto
+  temporal. Escribir solo en `.tmp-ecl139-browser/<fecha>/`; no sobrescribe
+  evidencia histórica. No ejecutarlo en paralelo con otra edición/build de login.
+- Evidencias nuevas: [resultados y hashes](evidencias/ECL-139/run-20261126/results.json),
+  [aviso de escritorio](evidencias/ECL-139/run-20261126/aviso-1280-light.png) y
+  [aviso móvil oscuro](evidencias/ECL-139/run-20261126/aviso-360-dark.png).
+  Cero violaciones detectadas en una auditoría automática no equivale a
+  conformidad WCAG completa ni sustituye lector de pantalla.
+- Regresión del modo Conductor: la suite existente `e2e/resiliencia.spec.ts`
+  debe aprobarse en los jobs de Chromium, Firefox y WebKit del head final del PR.
+  La carga offline de login de la prueba de dos builds no acredita por sí sola
+  la cola de incidencias del Conductor.
+
+Prueba manual en preview: ejecutar `npm run build` y `npm run preview`; abrir
+login y esperar el control del worker. Cambiar temporalmente un texto visible,
+reconstruir y recargar una vez: se debe conservar el texto antiguo y aparecer
+el aviso. En DevTools → Application → Service Workers, verificar waiting;
+aceptar con «Actualizar» y comprobar activated y el texto nuevo sin cerrar la
+pestaña. Restaurar el texto y reconstruir al terminar. El resultado real y
+quién lo comprobó se registran en el PR; no se atribuye a una prueba automatizada
+la condición de comprobación manual de DevTools.
+
+Giancarlo confirmó en el preview local de ECL-139: «Apareció el aviso, waiting
+pasó a activated y vi el texto nuevo». El recorrido usó el encabezado temporal
+«Iniciar sesión — prueba ECL-139», sin ingresar credenciales. La declaración
+no acredita una prueba de Narrador ni una ejecución en Render.
+
+**Primera distribución de esta función:** un navegador que aún ejecuta la shell
+anterior a ECL-139 no puede mostrar un componente que no contiene. Para incorporar
+esta función inicialmente, cerrar todas las pestañas de la app y volver a abrir
+después del despliegue, conservando los datos locales pendientes. Una vez
+instalada una versión con ECL-139, los despliegues posteriores usan el aviso.
+No borrar cachés o almacenamiento del sitio con reportes pendientes para forzar
+la actualización. El aviso no elimina la pérdida de un formulario aún no
+guardado si el usuario decide recargar.
+
 [← Volver al README principal](../README.md)

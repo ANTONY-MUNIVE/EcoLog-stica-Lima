@@ -1,0 +1,34 @@
+{
+  "registered_at": "2026-11-26T21:47:22.042Z",
+  "typecheck": "passed",
+  "lint": "passed",
+  "build": "passed; dist rebuilt after temporary marker",
+  "unit": {
+    "tests": 1081,
+    "files": 66,
+    "passed": true
+  },
+  "coverage": {
+    "linesPercent": 98.09,
+    "covered": 2980,
+    "total": 3038,
+    "affected": [
+      {
+        "file": "src/components/ShellUpdateNotice.tsx",
+        "lines": 11,
+        "covered": 11,
+        "branches": 9,
+        "branchesCovered": 9
+      },
+      {
+        "file": "src/services/offlineShell.ts",
+        "lines": 53,
+        "covered": 53,
+        "branches": 40,
+        "branchesCovered": 40
+      }
+    ]
+  },
+  "resilienciaSpecSha256": "04ec1d223555e9fbca20db54a51de2c3c0aefb5c6c18ca76c35ff10f3fc3cbed",
+  "note": "Local Chrome real and unit suite only. Three-browser driver offline regression is verified separately in PR CI."
+}
