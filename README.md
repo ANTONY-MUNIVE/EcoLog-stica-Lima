@@ -6,8 +6,8 @@
 [![Tests](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/tests.yml)
 [![Deploy production](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/deploy-production.yml)
 [![CodeQL](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ANTONY-MUNIVE/EcoLog-stica-Lima/actions/workflows/codeql.yml)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=JulioNaupariC_EcoLog-stica-Lima&metric=alert_status)](https://sonarcloud.io/project/overview?id=JulioNaupariC_EcoLog-stica-Lima)
-[![Cobertura](https://sonarcloud.io/api/project_badges/measure?project=JulioNaupariC_EcoLog-stica-Lima&metric=coverage)](https://sonarcloud.io/component_measures?id=JulioNaupariC_EcoLog-stica-Lima&metric=coverage)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ANTONY-MUNIVE_EcoLog-stica-Lima&metric=alert_status)](https://sonarcloud.io/project/overview?id=ANTONY-MUNIVE_EcoLog-stica-Lima)
+[![Cobertura](https://sonarcloud.io/api/project_badges/measure?project=ANTONY-MUNIVE_EcoLog-stica-Lima&metric=coverage)](https://sonarcloud.io/component_measures?id=ANTONY-MUNIVE_EcoLog-stica-Lima&metric=coverage)
 
 Repositorio de documentación y desarrollo del proyecto académico EcoLogística Lima. La solución propone una plataforma web para gestión operativa, optimización VRPTW/Green VRP, seguimiento geográfico, analítica y reportes de sostenibilidad.
 
