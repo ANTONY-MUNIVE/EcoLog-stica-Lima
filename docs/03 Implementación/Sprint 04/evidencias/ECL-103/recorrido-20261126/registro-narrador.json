@@ -1,0 +1,47 @@
+{
+  "registrado_utc": "2026-11-26T22:20:20.001759+00:00",
+  "fecha_comunicacion_lima": "2026-11-26",
+  "evaluador_declarante": "Giancarlo Soto",
+  "tipo": "confirmacion_global_del_usuario; no observacion directa de la IA",
+  "declaracion_literal": "SI TODO CORRECTO EL NARRADOS LEE TODO DE MANERA CORRECTA",
+  "respuesta_entorno_literal": "RENDER",
+  "entorno": "Render",
+  "url_solicitada": "https://ecologistica-web-9tkq.onrender.com",
+  "recorrido_solicitado": [
+    {
+      "pantalla": "Rutas y alertas / alternativa textual al mapa",
+      "rol_solicitado": "OPERADOR",
+      "pasos": "fecha, Optimizar fecha, optimizacion, lista accesible de paradas"
+    },
+    {
+      "pantalla": "Registro de resultado de parada",
+      "rol_solicitado": "OPERADOR",
+      "pasos": "registrar una parada de demo"
+    },
+    {
+      "pantalla": "Dashboard de sostenibilidad",
+      "rol_solicitado": "ANALISTA",
+      "pasos": "consultar un periodo con datos"
+    }
+  ],
+  "detalle_por_pantalla": "No transcrito; el resultado comunicado corresponde globalmente al recorrido solicitado.",
+  "criterios_solicitados": [
+    "1.3.2: orden de lectura",
+    "4.1.2: nombres de controles",
+    "4.1.3: avisos sin mover foco",
+    "1.4.1: informacion no dependiente solo del color"
+  ],
+  "fecha_hora_ejecucion": null,
+  "fecha_operacion": null,
+  "periodo_dashboard": null,
+  "version_chrome": null,
+  "version_narrador": null,
+  "commit_render": null,
+  "transcripcion_anuncios": null,
+  "capturas_aportadas": false,
+  "grabacion_aportada": false,
+  "zoom_real_200_confirmado": false,
+  "nuevo_ensayo_temporizador_2_2_1": false,
+  "defectos_especificos_comunicados": [],
+  "limitaciones": "Confirmacion declarada, sin prueba independiente ni detalle individual de anuncios/foco/color. La fecha es la comunicacion, no una fecha inventada de ejecucion."
+}

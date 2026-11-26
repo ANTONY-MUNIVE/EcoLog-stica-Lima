@@ -476,7 +476,7 @@ Los siguientes comentarios reservan enlaces para entregas futuras.
 - [ECL-102 — 04 OWASP V_1_0_0](<docs/03 Implementación/Sprint 04/04 OWASP V_1_0_0.md>)
 
 <!-- ECL-103 WCAG -->
-- [ECL-103 — 05 WCAG V_1_0_0](<docs/03 Implementación/Sprint 04/05 WCAG V_1_0_0.md>)
+- [ECL-103 — 05 WCAG V_1_1_0](<docs/03 Implementación/Sprint 04/05 WCAG V_1_1_0.md>) · [versión anterior V_1_0_0](<docs/03 Implementación/Sprint 04/05 WCAG V_1_0_0.md>)
 
 <!-- ECL-104 Matriz final -->
 - [ECL-104 — Matriz de trazabilidad del MVP V_1_0_0](<docs/03 Implementación/Sprint 04/Matriz de trazabilidad del MVP V_1_0_0.md>)
