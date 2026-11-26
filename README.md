@@ -49,7 +49,7 @@ Video del proyecto en [`docs/05 Video proyecto`](<docs/05 Video proyecto>):
 
 Despliegue en producción:
 
-<!-- ECL-137 guía de despliegue -->
+- [ECL-137 — Guía de despliegue en Render](docs/DEPLOY.md)
 
 ## Inspección 5 · Sprint 4: calidad, CI/CD y usabilidad
 
